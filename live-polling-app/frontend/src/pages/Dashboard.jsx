@@ -15,7 +15,6 @@ function ShareDialog({ poll, onClose }) {
 function DeleteDialog({ poll, onCancel, onConfirm, deleting }) {
   return <div className="modal-backdrop" role="presentation"><div className="confirm-modal card-surface" role="dialog" aria-modal="true" aria-labelledby="delete-poll-title"><span className="eyebrow">DELETE POLL</span><h2 id="delete-poll-title">Delete this poll?</h2><p>Are you sure you want to delete this poll?</p><p className="settings-note">This action cannot be undone.</p><div className="share-actions"><button className="small-action" type="button" onClick={onCancel} disabled={deleting}>Cancel</button><button className="delete-action" type="button" onClick={() => onConfirm(poll.id)} disabled={deleting}>{deleting ? 'Deleting...' : 'Delete'}</button></div></div></div>;
 }
-
 export default function Dashboard() {
   const { logout } = useAuth();
   const [polls, setPolls] = useState([]); const [query, setQuery] = useState(''); const [status, setStatus] = useState('All'); const [sharePoll, setSharePoll] = useState(null); const [deleteTarget, setDeleteTarget] = useState(null); const [deleting, setDeleting] = useState(false); const [success, setSuccess] = useState(''); const [deleteError, setDeleteError] = useState('');
