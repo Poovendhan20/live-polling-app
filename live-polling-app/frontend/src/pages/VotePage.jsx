@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { CheckCircle2, Sparkles } from 'lucide-react';
 import { getPoll, vote } from '../api/polls';
 import VoteOption from '../components/VoteOption';
 
@@ -63,22 +64,21 @@ export default function VotePage() {
   const pollClosed = Boolean(data.isClosed);
 
   if (!identityComplete && !hasVoted) {
-    return <main className="narrow-page identity-page voter-page"><span className="eyebrow">BEFORE YOU VOTE</span><h1>Tell us who is voting.</h1><p>Your name and email are used only to record this vote.</p><form className="card-surface identity-form" onSubmit={continueToVote}><label>Name<input value={voter.name} onChange={(event) => setVoter({ ...voter, name: event.target.value })} placeholder="Enter your name" autoComplete="name" /></label><label>Email<input type="email" value={voter.email} onChange={(event) => setVoter({ ...voter, email: event.target.value })} placeholder="Enter your email" autoComplete="email" /></label>{identityError && <div className="error">{identityError}</div>}<button className="button">Continue to Vote</button></form><CreatePollCallout /><VoterFooter /></main>;
+    return <main className="narrow-page identity-page voter-page"><div className="voter-intro"><span className="eyebrow">BEFORE YOU VOTE</span><h1>Tell us who is voting.</h1><p>Your name and email are used only to record this vote.</p></div><form className="card-surface identity-form" onSubmit={continueToVote}><label>Name<input value={voter.name} onChange={(event) => setVoter({ ...voter, name: event.target.value })} placeholder="Enter your name" autoComplete="name" /></label><label>Email<input type="email" value={voter.email} onChange={(event) => setVoter({ ...voter, email: event.target.value })} placeholder="Enter your email" autoComplete="email" /></label>{identityError && <div className="error">{identityError}</div>}<button className="button">Continue to Vote</button></form><CreatePollCallout /><VoterFooter /></main>;
   }
 
   return (
     <main className="narrow-page voter-page">
-      <span className="eyebrow">CAST YOUR VOTE</span>
-      <h1>{data.poll.question}</h1>
+      <div className="voter-intro"><span className="eyebrow">CAST YOUR VOTE</span><h1>{data.poll.question}</h1><p><Sparkles size={16} />Your response helps shape the outcome.</p></div>
       {pollClosed && !hasVoted && <div className="notice">This poll has ended.</div>}
       {!hasVoted && !pollClosed && (
         <>
           <div className="vote-list">
             {data.poll.options.map((o, i) => (
-              <VoteOption key={o} label={o} count={data.counts?.[i] || 0} selected={selected === i} onClick={() => setSelected(i)} />
+              <VoteOption key={o} index={i} label={o} count={data.counts?.[i] || 0} selected={selected === i} onClick={() => setSelected(i)} />
             ))}
           </div>
-          <button className="button" onClick={submit}>Submit vote</button>
+          <button className="button vote-submit" onClick={submit}>Submit vote <CheckCircle2 size={18} /></button>
         </>
       )}
       {message && (

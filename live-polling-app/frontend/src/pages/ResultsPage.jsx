@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Radio, Share2 } from 'lucide-react';
 import { getPoll } from '../api/polls';
 import useWebSocket from '../hooks/useWebSocket';
 import PollResultsChart from '../components/PollResultsChart';
@@ -65,9 +66,8 @@ export default function ResultsPage() {
 
   const resultsContent = (
     <>
-      <div className="page-back-heading"><button className="back-arrow" type="button" aria-label="Go back" onClick={() => navigate(-1)}>←</button><h1>Results</h1></div>
-      <span className="eyebrow">LIVE RESULTS</span>
-      <h2>{poll.poll.question}</h2>
+      <div className="page-back-heading"><button className="back-arrow" type="button" aria-label="Go back" onClick={() => navigate(-1)}><ArrowLeft size={20} /></button><span className="results-title">Results</span></div>
+      <div className="results-hero"><div><span className="eyebrow">LIVE RESULTS</span><h1>{poll.poll.question}</h1></div><span className={`live-status ${poll.isClosed ? 'is-closed' : ''}`}><Radio size={15} />{poll.isClosed ? 'Poll ended' : 'Live updates'}</span></div>
       {poll.isClosed && <div className="notice">This poll has ended.</div>}
 
       <div className="summary-grid">
@@ -76,7 +76,7 @@ export default function ResultsPage() {
           <strong>{totalVotes}</strong>
         </div>
         <div className="summary-card card-surface">
-          <span>Status</span>
+          <span>Poll status</span>
           <strong>{poll.status || 'Active'}</strong>
         </div>
       </div>
@@ -88,7 +88,7 @@ export default function ResultsPage() {
       <div className="share-box card-surface">
         <div className="share-header">
           <span>Share this poll</span>
-          <button type="button" className="button small" onClick={() => setShareOpen((v) => !v)}>Share Poll</button>
+          <button type="button" className="button small" onClick={() => setShareOpen((v) => !v)}><Share2 size={16} />Share Poll</button>
         </div>
         {shareOpen && (
           <div className="share-menu">
