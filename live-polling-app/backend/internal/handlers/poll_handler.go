@@ -2,15 +2,13 @@ package handlers
 
 import (
 	"errors"
-	"fmt"
 	"live-polling-app/backend/internal/services"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/xuri/excelize/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -185,48 +183,65 @@ func (h *PollHandler) Report(c *gin.Context) {
 		return
 	}
 	poll, _ := h.Service.Get(c, id)
-	counts, _ := h.Votes.Counts(c, poll)
-	total := totalVotes(counts)
-	deadline := "No deadline"
-	if poll.DeadlineAt != 0 {
-		deadline = time.UnixMilli(int64(poll.DeadlineAt)).UTC().Format(time.RFC3339)
-	}
-	lines := []string{"Poll Question," + poll.Question, "Poll ID," + poll.ID.Hex(), "Status," + poll.Status(), "Total Votes," + strconv.FormatInt(total, 10), "Deadline," + deadline, "", "Option,Votes,Percentage"}
-	for index, option := range poll.Options {
-		count := counts[strconv.Itoa(index)]
-		percentage := 0.0
-		if total > 0 {
-			percentage = float64(count) / float64(total) * 100
+	workbook := excelize.NewFile()
+	defer workbook.Close()
+	sheet := workbook.GetSheetName(0)
+	for column, header := range []string{"Name", "Email", "Selected Option"} {
+		cell, _ := excelize.CoordinatesToCellName(column+1, 1)
+		if err := workbook.SetCellValue(sheet, cell, header); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to generate report"})
+			return
 		}
-		lines = append(lines, fmt.Sprintf("%s,%d,%.2f", option, count, percentage))
 	}
-	lines = append(lines, "", "Name,Email,Selected Option")
 	cur, err := h.Votes.Votes.Find(c, bson.M{"poll_id": poll.ID})
-	if err == nil {
-		defer cur.Close(c)
-		for cur.Next(c) {
-			var vote struct {
-				UserID      primitive.ObjectID `bson:"user_id"`
-				VoterName   string             `bson:"voter_name"`
-				VoterEmail  string             `bson:"voter_email"`
-				OptionIndex int                `bson:"option_index"`
-			}
-			if cur.Decode(&vote) != nil || vote.OptionIndex < 0 || vote.OptionIndex >= len(poll.Options) {
-				continue
-			}
-			if vote.VoterEmail == "" && h.Users != nil {
-				var user struct {
-					Email string `bson:"email"`
-				}
-				if h.Users.FindOne(c, bson.M{"_id": vote.UserID}).Decode(&user) == nil {
-					vote.VoterEmail = user.Email
-					vote.VoterName = strings.Split(user.Email, "@")[0]
-				}
-			}
-			lines = append(lines, fmt.Sprintf("%s,%s,%s", vote.VoterName, vote.VoterEmail, poll.Options[vote.OptionIndex]))
-		}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to generate report"})
+		return
 	}
-	c.Header("Content-Type", "text/csv")
-	c.Header("Content-Disposition", "attachment; filename=\"poll-report.csv\"")
-	c.String(http.StatusOK, strings.Join(lines, "\n"))
+	defer cur.Close(c)
+	row := 2
+	for cur.Next(c) {
+		var vote struct {
+			UserID      primitive.ObjectID `bson:"user_id"`
+			VoterName   string             `bson:"voter_name"`
+			VoterEmail  string             `bson:"voter_email"`
+			OptionIndex int                `bson:"option_index"`
+		}
+		if cur.Decode(&vote) != nil || vote.OptionIndex < 0 || vote.OptionIndex >= len(poll.Options) {
+			continue
+		}
+		if vote.VoterEmail == "" && h.Users != nil {
+			var user struct {
+				Email string `bson:"email"`
+			}
+			if h.Users.FindOne(c, bson.M{"_id": vote.UserID}).Decode(&user) == nil {
+				vote.VoterEmail = user.Email
+				vote.VoterName = strings.Split(user.Email, "@")[0]
+			}
+		}
+		values := []string{vote.VoterName, vote.VoterEmail, poll.Options[vote.OptionIndex]}
+		for column, value := range values {
+			cell, _ := excelize.CoordinatesToCellName(column+1, row)
+			if err := workbook.SetCellValue(sheet, cell, value); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to generate report"})
+				return
+			}
+		}
+		row++
+	}
+	if err := cur.Err(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to generate report"})
+		return
+	}
+	for column, width := range map[string]float64{"A": 24, "B": 34, "C": 24} {
+		_ = workbook.SetColWidth(sheet, column, column, width)
+	}
+	buffer, err := workbook.WriteToBuffer()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to generate report"})
+		return
+	}
+	c.Header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	c.Header("Content-Disposition", "attachment; filename=\"LivePoll_Report_"+poll.ID.Hex()+".xlsx\"")
+	c.Data(http.StatusOK, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", buffer.Bytes())
 }
