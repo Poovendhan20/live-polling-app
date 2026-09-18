@@ -9,6 +9,6 @@ func CORS() cors.Config {
 		"https://live-polling-app-eight.vercel.app",
 	}
 	c.AllowHeaders = []string{"Origin", "Content-Type", "Authorization"}
-	c.AllowMethods = []string{"GET", "POST", "OPTIONS"}
+	c.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
 	return c
 }
