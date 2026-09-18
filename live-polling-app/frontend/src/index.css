@@ -54,6 +54,13 @@ button, input, select { font: inherit; }
   gap: 18px;
 }
 
+.account-menu { position: relative; }
+.account-trigger { border: 0; background: transparent; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; color: var(--ink); }
+.avatar { width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--secondary); color: var(--ink); font-weight: 700; }
+.account-dropdown { position: absolute; right: 0; top: calc(100% + 10px); min-width: 150px; display: grid; gap: 4px; padding: 8px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.account-dropdown a, .account-dropdown button { border: 0; background: transparent; text-align: left; padding: 9px 10px; border-radius: 9px; cursor: pointer; color: var(--ink); }
+.account-dropdown a:hover, .account-dropdown button:hover { background: var(--bg-soft); }
+
 .brand {
   font-weight: 700;
   font-size: 1.3rem;
@@ -280,6 +287,8 @@ input:focus, select:focus {
   font: 11px "DM Mono";
   color: var(--muted);
 }
+.vote-option-label { min-width: 0; overflow-wrap: anywhere; }
+.vote-option-meta { flex: 0 0 auto; white-space: nowrap; }
 
 .chart {
   margin: 12px 0 6px;
@@ -481,6 +490,24 @@ input:focus, select:focus {
 }
 
 .compact-page { max-width: 640px; }
+.creator-page { max-width: 980px; }
+.back-link { display: inline-block; margin-bottom: 24px; color: var(--primary-strong); font-weight: 600; }
+.identity-page { max-width: 620px; }
+.identity-form, .settings-form, .account-card { display: grid; gap: 16px; padding: 26px; margin-top: 24px; }
+.identity-form label, .settings-form label { display: grid; gap: 8px; font-weight: 600; }
+.settings-note { color: var(--muted); margin: 0; }
+.account-card span { color: var(--muted); }
+.summary-value-small { font-size: 1rem !important; letter-spacing: 0 !important; overflow-wrap: anywhere; }
+.analytics-chart { padding: 24px; margin-top: 22px; }
+.table-card { margin-top: 22px; padding: 10px; overflow-x: auto; }
+.voter-row { min-width: 620px; display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 16px; padding: 15px 14px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.voter-row:last-child { border-bottom: 0; }
+.voter-heading { color: var(--muted); font: 500 11px "DM Mono"; text-transform: uppercase; letter-spacing: .08em; }
+.poll-toolbar { display: grid; grid-template-columns: 1fr 150px; gap: 12px; }
+.modal-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 20px; background: rgba(28, 29, 43, .35); }
+.share-modal { width: min(560px, 100%); padding: 28px; position: relative; }
+.modal-close { position: absolute; right: 20px; top: 18px; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+.share-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; }
 
 @media (max-width: 920px) {
   .dashboard-shell { grid-template-columns: 1fr; }
@@ -496,7 +523,11 @@ input:focus, select:focus {
     grid-template-columns: 1fr;
   }
   .nav-links { gap: 10px; }
+  .account-trigger-label { display: none; }
   .topbar { padding-inline: 18px; }
   .section-heading, .share-header, .inline-actions, .poll-card-top { flex-direction: column; align-items: flex-start; }
   .auth-card { padding: 22px; }
+  .poll-toolbar { grid-template-columns: 1fr; }
+  .vote-option { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .vote-option-meta { white-space: normal; }
 }

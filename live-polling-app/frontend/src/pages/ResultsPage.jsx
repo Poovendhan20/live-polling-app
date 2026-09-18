@@ -42,10 +42,10 @@ export default function ResultsPage() {
   }, [id]);
 
   useEffect(() => {
-    if (poll && Object.keys(live).length) {
+    if (Object.keys(live).length) {
       setPoll((prev) => (prev ? { ...prev, counts: live } : prev));
     }
-  }, [live, poll]);
+  }, [live]);
 
   if (!poll) {
     return <main className="narrow-page"><p>Loading results...</p></main>;

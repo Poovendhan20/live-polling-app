@@ -1,1 +1,1 @@
-export default function VoteOption({ label, selected, onClick }) { return <button className={`vote-option ${selected ? 'selected' : ''}`} onClick={onClick}>{label}<span>{selected ? 'Selected' : 'Choose'}</span></button>; }
+export default function VoteOption({ label, count = 0, selected, onClick }) { return <button className={`vote-option ${selected ? 'selected' : ''}`} onClick={onClick}><span className="vote-option-label">{label}</span><span className="vote-option-meta">{count} votes · {selected ? 'Selected' : 'Choose'}</span></button>; }

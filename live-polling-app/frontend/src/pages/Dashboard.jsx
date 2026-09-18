@@ -1,91 +1,33 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getMyPolls } from '../api/polls';
+import { getMyPolls, getPollReport } from '../api/polls';
+import useAuth from '../hooks/useAuth';
+
+function ShareDialog({ poll, onClose }) {
+  const [copied, setCopied] = useState(false);
+  const url = `${window.location.origin}/vote/${poll.id}`;
+  const copy = async () => { await navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 1400); };
+  const share = async () => { if (navigator.share) { try { await navigator.share({ title: 'PollPop poll', text: poll.question, url }); return; } catch {} } await copy(); };
+  return <div className="modal-backdrop" role="presentation" onClick={onClose}><div className="share-modal card-surface" role="dialog" aria-modal="true" onClick={(event) => event.stopPropagation()}><button className="modal-close" type="button" onClick={onClose}>Close</button><span className="eyebrow">SHARE POLL</span><h2>{poll.question}</h2><p className="poll-id-line">Poll ID: {poll.id}</p><div className="share-link">{url}</div><div className="share-actions"><button className="button" type="button" onClick={copy}>{copied ? 'Link copied!' : 'Copy Link'}</button><button className="small-action" type="button" onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`${poll.question} ${url}`)}`, '_blank')}>WhatsApp</button><button className="small-action" type="button" onClick={share}>Native Share</button></div></div></div>;
+}
 
 export default function Dashboard() {
+  const { logout } = useAuth();
   const [polls, setPolls] = useState([]);
+  const [query, setQuery] = useState('');
+  const [status, setStatus] = useState('All');
+  const [sharePoll, setSharePoll] = useState(null);
 
-  useEffect(() => {
-    getMyPolls()
-      .then((r) => setPolls(Array.isArray(r.data) ? r.data : []))
-      .catch(() => setPolls([]));
-  }, []);
+  useEffect(() => { getMyPolls().then((response) => setPolls((response.data || []).map((item) => ({ ...item.poll, counts: item.counts, totalVotes: item.totalVotes, status: item.status })))).catch(() => setPolls([])); }, []);
 
-  const totalVotes = polls.reduce((sum, poll) => {
-    const counts = poll.counts || {};
-    return sum + Object.values(counts).reduce((inner, v) => inner + Number(v || 0), 0);
-  }, 0);
-  const activePolls = polls.filter((p) => !p.deadlineAt || Number(p.deadlineAt) > Date.now()).length;
-  const closedPolls = polls.length - activePolls;
-  const recent = [...polls].sort((a, b) => Number(new Date(b.createdAt || 0)) - Number(new Date(a.createdAt || 0))).slice(0, 4);
+  const visiblePolls = useMemo(() => polls.filter((poll) => {
+    const matchesQuery = poll.question.toLowerCase().includes(query.toLowerCase()) || poll.id.toLowerCase().includes(query.toLowerCase());
+    return matchesQuery && (status === 'All' || poll.status === status);
+  }), [polls, query, status]);
+  const totalVotes = polls.reduce((sum, poll) => sum + Number(poll.totalVotes || 0), 0);
+  const activePolls = polls.filter((poll) => poll.status === 'Active').length;
 
-  return (
-    <main className="dashboard-shell">
-      <aside className="sidebar-panel">
-        <div>
-          <div className="brand-wrap"><span className="brand-mark">P</span><span>PollPop</span></div>
-          <nav className="sidebar-nav">
-            <a href="/choice">Home</a>
-            <a href="/join">Explore Polls</a>
-            <a href="/create">Create Poll</a>
-            <a href="/dashboard" className="active">My Polls</a>
-            <a href="/dashboard">Analytics</a>
-            <a href="/choice">Settings</a>
-            <button className="sidebar-signout" type="button">Sign Out</button>
-          </nav>
-        </div>
-      </aside>
+  const download = async (id) => { const response = await getPollReport(id); const link = document.createElement('a'); link.href = URL.createObjectURL(response.data); link.download = `poll-${id}-report.csv`; link.click(); URL.revokeObjectURL(link.href); };
 
-      <section className="content-panel">
-        <div className="section-heading">
-          <div>
-            <span className="eyebrow">DASHBOARD</span>
-            <h1>Welcome back, creator.</h1>
-          </div>
-          <Link className="button" to="/create">Create Poll</Link>
-        </div>
-
-        <div className="stats-grid">
-          <div className="stat-card"><span>Total Polls</span><strong>{polls.length}</strong></div>
-          <div className="stat-card"><span>Total Votes</span><strong>{totalVotes}</strong></div>
-          <div className="stat-card"><span>Active Polls</span><strong>{activePolls}</strong></div>
-          <div className="stat-card"><span>Closed Polls</span><strong>{closedPolls}</strong></div>
-        </div>
-
-        <div className="panel-header-row">
-          <h2>Recent Polls</h2>
-        </div>
-
-        <div className="poll-list">
-          {recent.length === 0 && <div className="empty-state card-surface">No polls yet. Create your first poll to get started.</div>}
-          {recent.map((poll) => {
-            const total = Object.values(poll.counts || {}).reduce((sum, value) => sum + Number(value || 0), 0);
-            const status = poll.deadlineAt && Number(poll.deadlineAt) < Date.now() ? 'Closed' : 'Active';
-            return (
-              <article key={poll.id} className="poll-card card-surface">
-                <div className="poll-card-top">
-                  <div>
-                    <span className="pill">{status}</span>
-                    <h3>{poll.question}</h3>
-                  </div>
-                  <span className="poll-id">ID: {poll.id}</span>
-                </div>
-                <div className="poll-meta-row">
-                  <span>{total} votes</span>
-                  <span>{poll.deadlineAt ? new Date(Number(poll.deadlineAt)).toLocaleString() : 'No deadline'}</span>
-                </div>
-                <div className="card-actions">
-                  <Link to={`/results/${poll.id}`} className="small-action">View Results</Link>
-                  <button type="button" className="small-action muted">View Voters</button>
-                  <button type="button" className="small-action muted">Analytics</button>
-                  <button type="button" className="small-action muted">Share</button>
-                  <button type="button" className="small-action muted">Download Report</button>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-    </main>
-  );
+  return <main className="dashboard-shell"><aside className="sidebar-panel"><div><div className="brand-wrap"><span className="brand-mark">P</span><span>PollPop</span></div><nav className="sidebar-nav"><Link to="/choice">Home</Link><Link to="/join">Explore Polls</Link><Link to="/create">Create Poll</Link><Link to="/dashboard" className="active">My Polls</Link><Link to="/dashboard">Analytics</Link><Link to="/settings">Settings</Link></nav></div><button className="sidebar-signout" type="button" onClick={logout}>Sign Out</button></aside><section className="content-panel"><div className="section-heading"><div><span className="eyebrow">MY POLLS</span><h1>Make every question count.</h1></div><Link className="button" to="/create">Create Poll</Link></div><div className="poll-toolbar"><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search your polls..." /><select value={status} onChange={(event) => setStatus(event.target.value)}><option>All</option><option>Active</option><option>Closed</option></select></div><div className="stats-grid"><div className="stat-card"><span>Total Polls</span><strong>{polls.length}</strong></div><div className="stat-card"><span>Total Votes</span><strong>{totalVotes}</strong></div><div className="stat-card"><span>Active Polls</span><strong>{activePolls}</strong></div><div className="stat-card"><span>Closed Polls</span><strong>{polls.length - activePolls}</strong></div></div><div className="poll-list">{visiblePolls.length === 0 && <div className="empty-state card-surface">No polls match this view.</div>}{visiblePolls.map((poll) => <article className="poll-card card-surface" key={poll.id}><div className="poll-card-top"><div><span className="pill">{poll.status}</span><h3>{poll.question}</h3></div><span className="poll-id">ID: {poll.id}</span></div><div className="poll-meta-row"><span>{poll.totalVotes || 0} votes</span><span>{poll.deadlineAt ? new Date(Number(poll.deadlineAt)).toLocaleString() : 'No deadline'}</span></div><div className="card-actions"><Link className="small-action" to={`/results/${poll.id}`}>View Results</Link><Link className="small-action" to={`/polls/${poll.id}/voters`}>View Voters</Link><Link className="small-action" to={`/polls/${poll.id}/analytics`}>Analytics</Link><button className="small-action" type="button" onClick={() => setSharePoll(poll)}>Share</button><button className="small-action" type="button" onClick={() => download(poll.id)}>Download Report</button></div></article>)}</div></section>{sharePoll && <ShareDialog poll={sharePoll} onClose={() => setSharePoll(null)} />}</main>;
 }

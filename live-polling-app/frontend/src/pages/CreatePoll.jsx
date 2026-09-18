@@ -42,7 +42,7 @@ export default function CreatePoll() {
             <a href="/create" className="active">Create Poll</a>
             <a href="/dashboard">My Polls</a>
             <a href="/dashboard">Analytics</a>
-            <a href="/choice">Settings</a>
+            <a href="/settings">Settings</a>
           </nav>
         </div>
       </aside>

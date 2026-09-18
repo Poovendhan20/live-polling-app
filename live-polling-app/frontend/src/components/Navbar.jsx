@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { getMyPolls } from '../api/polls';
 import useAuth from '../hooks/useAuth';
 
 export default function Navbar() {
   const { token, logout } = useAuth();
+  const location = useLocation();
   const [hasCreatedPolls, setHasCreatedPolls] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -29,6 +31,10 @@ export default function Navbar() {
     );
   }
 
+  if (location.pathname.startsWith('/vote/') || location.pathname.startsWith('/results/')) {
+    return <nav className="topbar"><Link to="/choice" className="brand">PollPop</Link></nav>;
+  }
+
   return (
     <nav className="topbar">
       <Link to="/choice" className="brand">PollPop</Link>
@@ -38,7 +44,7 @@ export default function Navbar() {
         <Link to="/create">Create Poll</Link>
         {hasCreatedPolls && <Link to="/dashboard">My Polls</Link>}
         <Link to="/dashboard">Analytics</Link>
-        <button className="link-button" type="button" onClick={logout}>Sign out</button>
+        <div className="account-menu"><button className="account-trigger" type="button" onClick={() => setAccountOpen((open) => !open)}><span className="avatar">{(localStorage.getItem('profileName') || 'P').slice(0, 1).toUpperCase()}</span><span className="account-trigger-label">Account</span></button>{accountOpen && <div className="account-dropdown"><Link to="/account" onClick={() => setAccountOpen(false)}>Account</Link><Link to="/settings" onClick={() => setAccountOpen(false)}>Settings</Link><button type="button" onClick={logout}>Sign Out</button></div>}</div>
       </div>
     </nav>
   );

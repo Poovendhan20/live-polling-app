@@ -30,13 +30,15 @@ func (h *VoteHandler) Vote(c *gin.Context) {
 		return
 	}
 	var in struct {
-		OptionIndex int `json:"optionIndex"`
+		OptionIndex int    `json:"optionIndex"`
+		VoterName   string `json:"voterName"`
+		VoterEmail  string `json:"voterEmail"`
 	}
 	if c.ShouldBindJSON(&in) != nil {
 		c.JSON(400, gin.H{"error": "invalid request"})
 		return
 	}
-	counts, e := h.Votes.Vote(c, p, in.OptionIndex, userID.(primitive.ObjectID), h.Votes.Fingerprint(id.Hex(), c.ClientIP(), c.GetHeader("User-Agent")))
+	counts, e := h.Votes.Vote(c, p, in.OptionIndex, userID.(primitive.ObjectID), h.Votes.Fingerprint(id.Hex(), c.ClientIP(), c.GetHeader("User-Agent")), in.VoterName, in.VoterEmail)
 	if e != nil {
 		c.JSON(409, gin.H{"error": e.Error()})
 		return
