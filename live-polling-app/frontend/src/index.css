@@ -293,6 +293,66 @@ input:focus, select:focus {
 .chart {
   margin: 12px 0 6px;
 }
+.results-page .summary-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+}
+.results-page .summary-card {
+  min-height: 112px;
+  align-content: center;
+}
+.results-card {
+  padding: 26px 30px;
+  margin-top: 22px;
+}
+.results-card h3 {
+  margin: 0 0 18px;
+  font-size: 1.35rem;
+}
+.results-list {
+  display: grid;
+  gap: 14px;
+}
+.result-row {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.58);
+}
+.result-row-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  min-width: 0;
+}
+.result-option {
+  min-width: 0;
+  color: var(--ink);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.result-stat {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 14px;
+  color: var(--muted);
+  white-space: nowrap;
+  text-align: right;
+}
+.result-stat b { color: var(--ink); }
+.result-row .bar-track { margin-top: 0; }
+.results-live-note {
+  display: block;
+  padding: 4px 2px 0;
+  color: var(--muted);
+  font: 12px "DM Mono";
+}
 .bar-row { margin: 20px 0; }
 .bar-label { display: flex; justify-content: space-between; gap: 12px; }
 .bar-track {
@@ -530,4 +590,9 @@ input:focus, select:focus {
   .poll-toolbar { grid-template-columns: 1fr; }
   .vote-option { align-items: flex-start; flex-direction: column; gap: 8px; }
   .vote-option-meta { white-space: normal; }
+  .results-page .summary-grid { grid-template-columns: 1fr; }
+  .results-card { padding: 20px 16px; }
+  .result-row { padding: 16px; }
+  .result-row-header { gap: 12px; }
+  .result-stat { gap: 8px; font-size: .86rem; }
 }

@@ -44,7 +44,7 @@ export default function Navbar() {
         <Link to="/create">Create Poll</Link>
         {hasCreatedPolls && <Link to="/dashboard">My Polls</Link>}
         <Link to="/dashboard">Analytics</Link>
-        <div className="account-menu"><button className="account-trigger" type="button" onClick={() => setAccountOpen((open) => !open)}><span className="avatar">{(localStorage.getItem('profileName') || 'P').slice(0, 1).toUpperCase()}</span><span className="account-trigger-label">Account</span></button>{accountOpen && <div className="account-dropdown"><Link to="/account" onClick={() => setAccountOpen(false)}>Account</Link><Link to="/settings" onClick={() => setAccountOpen(false)}>Settings</Link><button type="button" onClick={logout}>Sign Out</button></div>}</div>
+        <div className="account-menu"><button className="account-trigger" type="button" onClick={() => setAccountOpen((open) => !open)}><span className="avatar">P</span><span className="account-trigger-label">Poovendhan R</span></button>{accountOpen && <div className="account-dropdown"><Link to="/account" onClick={() => setAccountOpen(false)}>Account</Link><Link to="/settings" onClick={() => setAccountOpen(false)}>Settings</Link><button type="button" onClick={logout}>Sign Out</button></div>}</div>
       </div>
     </nav>
   );

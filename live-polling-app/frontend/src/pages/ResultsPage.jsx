@@ -76,7 +76,7 @@ export default function ResultsPage() {
         </div>
       </div>
 
-      <div className="card-surface chart-card">
+      <div className="card-surface chart-card results-card">
         <PollResultsChart options={poll.poll.options} counts={poll.counts || {}} />
       </div>
 
@@ -97,13 +97,13 @@ export default function ResultsPage() {
         <div className="poll-id-line">Poll ID: {id}</div>
       </div>
 
-      <div className="card-surface details-card">
+      <div className="card-surface details-card results-card">
         <h3>Breakdown</h3>
         {optionEntries.map(({ option, count, percentage }) => (
-          <div key={option} className="bar-row">
-            <div className="bar-label">
-              <span>{option}</span>
-              <strong>{count} · {percentage.toFixed(1)}%</strong>
+          <div key={option} className="result-row">
+            <div className="result-row-header">
+              <span className="result-option">{option}</span>
+              <span className="result-stat"><b>{count} votes</b><span>{percentage.toFixed(1)}%</span></span>
             </div>
             <div className="bar-track"><div className="bar-fill" style={{ width: `${Math.max(percentage, 8)}%` }} /></div>
           </div>
