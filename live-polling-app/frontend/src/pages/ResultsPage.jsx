@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getPoll } from '../api/polls';
 import useWebSocket from '../hooks/useWebSocket';
 import PollResultsChart from '../components/PollResultsChart';
 
 export default function ResultsPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [poll, setPoll] = useState();
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -61,6 +62,7 @@ export default function ResultsPage() {
 
   return (
     <main className="narrow-page results-page">
+      <button className="back-arrow" type="button" aria-label="Go back" onClick={() => navigate(-1)}>←</button>
       <span className="eyebrow">LIVE RESULTS</span>
       <h1>{poll.poll.question}</h1>
       {poll.isClosed && <div className="notice">This poll has ended.</div>}

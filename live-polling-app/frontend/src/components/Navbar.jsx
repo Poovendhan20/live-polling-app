@@ -36,6 +36,10 @@ export default function Navbar() {
     );
   }
 
+  if (location.pathname === '/choice' || location.pathname === '/dashboard' || location.pathname === '/create' || location.pathname === '/settings' || location.pathname === '/account' || location.pathname.startsWith('/analytics/') || location.pathname.startsWith('/polls/')) {
+    return null;
+  }
+
   return (
     <nav className="topbar">
       <Link to="/choice" className="brand">PollPop</Link>

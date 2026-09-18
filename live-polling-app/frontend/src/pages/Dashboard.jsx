@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getMyPolls, getPollReport } from '../api/polls';
 import useAuth from '../hooks/useAuth';
+import CreatorSidebar from '../components/CreatorSidebar';
 
 function ShareDialog({ poll, onClose }) {
   const [copied, setCopied] = useState(false);
@@ -13,21 +14,10 @@ function ShareDialog({ poll, onClose }) {
 
 export default function Dashboard() {
   const { logout } = useAuth();
-  const [polls, setPolls] = useState([]);
-  const [query, setQuery] = useState('');
-  const [status, setStatus] = useState('All');
-  const [sharePoll, setSharePoll] = useState(null);
-
+  const [polls, setPolls] = useState([]); const [query, setQuery] = useState(''); const [status, setStatus] = useState('All'); const [sharePoll, setSharePoll] = useState(null);
   useEffect(() => { getMyPolls().then((response) => setPolls((response.data || []).map((item) => ({ ...item.poll, counts: item.counts, totalVotes: item.totalVotes, status: item.status })))).catch(() => setPolls([])); }, []);
-
-  const visiblePolls = useMemo(() => polls.filter((poll) => {
-    const matchesQuery = poll.question.toLowerCase().includes(query.toLowerCase()) || poll.id.toLowerCase().includes(query.toLowerCase());
-    return matchesQuery && (status === 'All' || poll.status === status);
-  }), [polls, query, status]);
-  const totalVotes = polls.reduce((sum, poll) => sum + Number(poll.totalVotes || 0), 0);
-  const activePolls = polls.filter((poll) => poll.status === 'Active').length;
-
+  const visiblePolls = useMemo(() => polls.filter((poll) => { const matchesQuery = poll.question.toLowerCase().includes(query.toLowerCase()) || poll.id.toLowerCase().includes(query.toLowerCase()); return matchesQuery && (status === 'All' || poll.status === status); }), [polls, query, status]);
+  const totalVotes = polls.reduce((sum, poll) => sum + Number(poll.totalVotes || 0), 0); const activePolls = polls.filter((poll) => poll.status === 'Active').length;
   const download = async (id) => { const response = await getPollReport(id); const link = document.createElement('a'); link.href = URL.createObjectURL(response.data); link.download = `poll-${id}-report.csv`; link.click(); URL.revokeObjectURL(link.href); };
-
-  return <main className="dashboard-shell"><aside className="sidebar-panel"><div><div className="brand-wrap"><span className="brand-mark">P</span><span>PollPop</span></div><nav className="sidebar-nav"><NavLink to="/choice">Home</NavLink><NavLink to="/join">Explore Polls</NavLink><NavLink to="/create">Create Poll</NavLink><NavLink to="/dashboard">My Polls</NavLink>{polls[0] && <NavLink to={`/analytics/${polls[0].id}`}>Analytics</NavLink>}<NavLink to="/settings">Settings</NavLink></nav></div><button className="sidebar-signout" type="button" onClick={logout}>Sign Out</button></aside><section className="content-panel"><div className="section-heading"><div><span className="eyebrow">MY POLLS</span><h1>Make every question count.</h1></div><Link className="button" to="/create">Create Poll</Link></div><div className="poll-toolbar"><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search your polls..." /><select value={status} onChange={(event) => setStatus(event.target.value)}><option>All</option><option>Active</option><option>Closed</option></select></div><div className="stats-grid"><div className="stat-card"><span>Total Polls</span><strong>{polls.length}</strong></div><div className="stat-card"><span>Total Votes</span><strong>{totalVotes}</strong></div><div className="stat-card"><span>Active Polls</span><strong>{activePolls}</strong></div><div className="stat-card"><span>Closed Polls</span><strong>{polls.length - activePolls}</strong></div></div><div className="poll-list">{visiblePolls.length === 0 && <div className="empty-state card-surface">No polls match this view.</div>}{visiblePolls.map((poll) => <article className="poll-card card-surface" key={poll.id}><div className="poll-card-top"><div><span className="pill">{poll.status}</span><h3>{poll.question}</h3></div><span className="poll-id">ID: {poll.id}</span></div><div className="poll-meta-row"><span>{poll.totalVotes || 0} votes</span><span>{poll.deadlineAt ? new Date(Number(poll.deadlineAt)).toLocaleString() : 'No deadline'}</span></div><div className="card-actions"><Link className="small-action" to={`/results/${poll.id}`}>View Results</Link><Link className="small-action" to={`/polls/${poll.id}/voters`}>View Voters</Link><Link className="small-action" to={`/analytics/${poll.id}`}>Analytics</Link><button className="small-action" type="button" onClick={() => setSharePoll(poll)}>Share</button><button className="small-action" type="button" onClick={() => download(poll.id)}>Download Report</button></div></article>)}</div></section>{sharePoll && <ShareDialog poll={sharePoll} onClose={() => setSharePoll(null)} />}</main>;
+  return <main className="dashboard-shell"><CreatorSidebar pollId={polls[0]?.id} /><section className="content-panel"><div className="section-heading"><div><span className="eyebrow">MY POLLS</span><h1>Make every question count.</h1></div><Link className="button" to="/create">Create Poll</Link></div><div className="poll-toolbar"><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search your polls..." /><select value={status} onChange={(event) => setStatus(event.target.value)}><option>All</option><option>Active</option><option>Closed</option></select></div><div className="stats-grid"><div className="stat-card"><span>Total Polls</span><strong>{polls.length}</strong></div><div className="stat-card"><span>Total Votes</span><strong>{totalVotes}</strong></div><div className="stat-card"><span>Active Polls</span><strong>{activePolls}</strong></div><div className="stat-card"><span>Closed Polls</span><strong>{polls.length - activePolls}</strong></div></div><div className="poll-list">{visiblePolls.length === 0 && <div className="empty-state card-surface">No polls match this view.</div>}{visiblePolls.map((poll) => <article className="poll-card card-surface" key={poll.id}><div className="poll-card-top"><div><span className="pill">{poll.status}</span><h3>{poll.question}</h3></div><span className="poll-id">ID: {poll.id}</span></div><div className="poll-meta-row"><span>{poll.totalVotes || 0} votes</span><span>{poll.deadlineAt ? new Date(Number(poll.deadlineAt)).toLocaleString() : 'No deadline'}</span></div><div className="card-actions"><Link className="small-action" to={`/results/${poll.id}`}>View Results</Link><Link className="small-action" to={`/polls/${poll.id}/voters`}>View Voters</Link><Link className="small-action" to={`/analytics/${poll.id}`}>Analytics</Link><button className="small-action" type="button" onClick={() => setSharePoll(poll)}>Share</button><button className="small-action" type="button" onClick={() => download(poll.id)}>Download Report</button></div></article>)}</div></section>{sharePoll && <ShareDialog poll={sharePoll} onClose={() => setSharePoll(null)} />}</main>;
 }

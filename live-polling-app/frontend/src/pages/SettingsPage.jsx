@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import CreatorSidebar from '../components/CreatorSidebar';
 
 export default function SettingsPage() {
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <main className="narrow-page creator-page settings-page">
+    <main className="dashboard-shell"><CreatorSidebar /><section className="content-panel narrow-content settings-page">
       <button className="back-arrow" type="button" aria-label="Go back" onClick={() => navigate(-1)}>←</button>
       <span className="eyebrow">ACCOUNT SETTINGS</span>
       <h1>Account Settings</h1>
@@ -67,6 +68,6 @@ export default function SettingsPage() {
         </div>
         <div className="settings-field"><span className="settings-label">Email</span><strong className="settings-value">{profile?.email || 'Signed-in account'}</strong></div>
       </section>
-    </main>
+    </section></main>
   );
 }

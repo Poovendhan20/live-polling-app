@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPoll } from '../api/polls';
+import CreatorSidebar from '../components/CreatorSidebar';
 
 export default function CreatePoll() {
   const [question, setQuestion] = useState('');
@@ -33,19 +34,7 @@ export default function CreatePoll() {
 
   return (
     <main className="dashboard-shell create-shell">
-      <aside className="sidebar-panel">
-        <div>
-          <div className="brand-wrap"><span className="brand-mark">P</span><span>PollPop</span></div>
-          <nav className="sidebar-nav">
-            <a href="/choice">Home</a>
-            <a href="/join">Explore Polls</a>
-            <a href="/create" className="active">Create Poll</a>
-            <a href="/dashboard">My Polls</a>
-            <a href="/dashboard">Analytics</a>
-            <a href="/settings">Settings</a>
-          </nav>
-        </div>
-      </aside>
+      <CreatorSidebar />
       <section className="content-panel form-panel">
         <div className="section-heading">
           <div>
