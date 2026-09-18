@@ -4,7 +4,10 @@ import "github.com/gin-contrib/cors"
 
 func CORS() cors.Config {
 	c := cors.DefaultConfig()
-	c.AllowOrigins = []string{"http://localhost:5173"}
+	c.AllowOrigins = []string{
+		"http://localhost:5173",
+		"https://live-polling-app-eight.vercel.app",
+	}
 	c.AllowHeaders = []string{"Origin", "Content-Type", "Authorization"}
 	c.AllowMethods = []string{"GET", "POST", "OPTIONS"}
 	return c
