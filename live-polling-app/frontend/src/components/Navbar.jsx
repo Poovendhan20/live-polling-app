@@ -24,6 +24,17 @@ export default function Navbar() {
   }
 
   if (location.pathname.startsWith('/vote/') || location.pathname === '/join') {
+    if (location.pathname.startsWith('/vote/')) {
+      return (
+        <nav className="voter-topbar" aria-label="Voter navigation">
+          <div className="voter-auth-links">
+            {!token && <><Link to="/login" state={{ from: { pathname: '/create' } }}>Login</Link><Link to="/signup" state={{ from: { pathname: '/create' } }}>Sign Up</Link></>}
+            {token && <Link to="/create">Create Poll</Link>}
+          </div>
+          <span className="brand">LivePoll</span>
+        </nav>
+      );
+    }
     return <nav className="topbar"><span className="brand">LivePoll</span></nav>;
   }
 

@@ -48,6 +48,18 @@ button, input, select { font: inherit; }
   z-index: 10;
 }
 
+.voter-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 6vw;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 250, 243, 0.9);
+}
+.voter-auth-links { display: flex; align-items: center; gap: 18px; }
+.voter-auth-links a { color: var(--primary-strong); font-weight: 700; }
+.voter-auth-links a:hover { text-decoration: underline; }
+
 .nav-links {
   display: flex;
   align-items: center;
@@ -625,6 +637,10 @@ input:focus, select:focus {
 .profile-edit-form { display: grid; gap: 12px; }
 .settings-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .identity-page { max-width: 620px; }
+.voter-page { min-height: calc(100vh - 70px); display: flex; flex-direction: column; }
+.voter-create-callout { margin-top: auto; padding: 64px 0 8px; text-align: center; }
+.voter-create-callout p { margin: 0 0 14px; color: var(--muted); }
+.voter-footer { padding: 24px 0 0; color: var(--muted); font: 11px "DM Mono"; letter-spacing: .08em; text-align: center; text-transform: uppercase; }
 .identity-form, .settings-form, .account-card { display: grid; gap: 16px; padding: 26px; margin-top: 24px; }
 .identity-form label, .settings-form label { display: grid; gap: 8px; font-weight: 600; }
 .settings-note { color: var(--muted); margin: 0; }
@@ -674,6 +690,8 @@ input:focus, select:focus {
   .nav-links { gap: 10px; }
   .account-trigger-label { display: none; }
   .topbar { padding-inline: 18px; }
+  .voter-topbar { padding: 15px 18px; }
+  .voter-auth-links { gap: 14px; font-size: .92rem; }
   .section-heading, .share-header, .inline-actions, .poll-card-top { flex-direction: column; align-items: flex-start; }
   .auth-card { padding: 22px; }
   .create-page-header, .create-form { width: 100%; }

@@ -3,6 +3,14 @@ import { Link, useParams } from 'react-router-dom';
 import { getPoll, vote } from '../api/polls';
 import VoteOption from '../components/VoteOption';
 
+function CreatePollCallout() {
+  return <section className="voter-create-callout"><p>Want to create your own poll?</p><Link className="button small" to="/create">Create Poll</Link></section>;
+}
+
+function VoterFooter() {
+  return <footer className="voter-footer">LivePoll</footer>;
+}
+
 export default function VotePage() {
   const { id } = useParams();
   const [data, setData] = useState();
@@ -48,18 +56,18 @@ export default function VotePage() {
   };
 
   if (!data) {
-    return <main className="narrow-page"><p>{message || 'Loading poll...'}</p></main>;
+    return <main className="narrow-page voter-page"><p>{message || 'Loading poll...'}</p><CreatePollCallout /><VoterFooter /></main>;
   }
 
   const hasVoted = Boolean(data.hasVoted || message === 'Your vote is submitted');
   const pollClosed = Boolean(data.isClosed);
 
   if (!identityComplete && !hasVoted) {
-    return <main className="narrow-page identity-page"><span className="eyebrow">BEFORE YOU VOTE</span><h1>Tell us who is voting.</h1><p>Your name and email are used only to record this vote.</p><form className="card-surface identity-form" onSubmit={continueToVote}><label>Name<input value={voter.name} onChange={(event) => setVoter({ ...voter, name: event.target.value })} placeholder="Enter your name" autoComplete="name" /></label><label>Email<input type="email" value={voter.email} onChange={(event) => setVoter({ ...voter, email: event.target.value })} placeholder="Enter your email" autoComplete="email" /></label>{identityError && <div className="error">{identityError}</div>}<button className="button">Continue to Vote</button></form></main>;
+    return <main className="narrow-page identity-page voter-page"><span className="eyebrow">BEFORE YOU VOTE</span><h1>Tell us who is voting.</h1><p>Your name and email are used only to record this vote.</p><form className="card-surface identity-form" onSubmit={continueToVote}><label>Name<input value={voter.name} onChange={(event) => setVoter({ ...voter, name: event.target.value })} placeholder="Enter your name" autoComplete="name" /></label><label>Email<input type="email" value={voter.email} onChange={(event) => setVoter({ ...voter, email: event.target.value })} placeholder="Enter your email" autoComplete="email" /></label>{identityError && <div className="error">{identityError}</div>}<button className="button">Continue to Vote</button></form><CreatePollCallout /><VoterFooter /></main>;
   }
 
   return (
-    <main className="narrow-page">
+    <main className="narrow-page voter-page">
       <span className="eyebrow">CAST YOUR VOTE</span>
       <h1>{data.poll.question}</h1>
       {pollClosed && !hasVoted && <div className="notice">This poll has ended.</div>}
@@ -78,6 +86,8 @@ export default function VotePage() {
           {message} <Link to={`/results/${id}`}>View live results</Link>
         </p>
       )}
+      <CreatePollCallout />
+      <VoterFooter />
     </main>
   );
 }
