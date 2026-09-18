@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"live-polling-app/backend/internal/models"
+	"log"
 	"strings"
 	"time"
 
@@ -51,9 +52,18 @@ func (s *AuthService) Signup(ctx context.Context, email, password string) (strin
 	}
 	u := models.User{ID: primitive.NewObjectID(), Email: email, PasswordHash: string(hash), CreatedAt: primitive.NewDateTimeFromTime(time.Now())}
 	if _, e = s.Users.InsertOne(ctx, u); e != nil {
-		return "", errors.New("email already registered")
+		if mongo.IsDuplicateKeyError(e) {
+			return "", errors.New("email already registered")
+		}
+		log.Printf("signup user insert failed: %v", e)
+		return "", errors.New("unable to create account")
 	}
-	return s.token(u.ID.Hex(), u.Email)
+	token, e := s.token(u.ID.Hex(), u.Email)
+	if e != nil {
+		log.Printf("signup token creation failed: %v", e)
+		return "", errors.New("unable to create account")
+	}
+	return token, nil
 }
 func (s *AuthService) Login(ctx context.Context, email, password string) (string, error) {
 	var u models.User

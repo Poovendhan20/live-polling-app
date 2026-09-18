@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"live-polling-app/backend/internal/services"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,13 +13,18 @@ import (
 type AuthHandler struct{ Service *services.AuthService }
 
 func (h *AuthHandler) Signup(c *gin.Context) {
-	var in struct{ Email, Password string }
-	if c.ShouldBindJSON(&in) != nil {
+	var in struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+	if err := c.ShouldBindJSON(&in); err != nil {
+		log.Printf("signup request rejected: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
 	token, e := h.Service.Signup(c, in.Email, in.Password)
 	if e != nil {
+		log.Printf("signup failed: %v", e)
 		c.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
 		return
 	}
