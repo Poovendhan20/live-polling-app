@@ -560,6 +560,8 @@ input:focus, select:focus {
 .summary-value-small { font-size: 1rem !important; letter-spacing: 0 !important; overflow-wrap: anywhere; }
 .analytics-chart { padding: 24px; margin-top: 22px; }
 .table-card { margin-top: 22px; padding: 10px; overflow-x: auto; }
+.voters-page { max-width: 980px; }
+.voters-page h1 { margin-bottom: 26px; }
 .voter-row { min-width: 620px; display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 16px; padding: 15px 14px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
 .voter-row:last-child { border-bottom: 0; }
 .voter-heading { color: var(--muted); font: 500 11px "DM Mono"; text-transform: uppercase; letter-spacing: .08em; }
@@ -595,4 +597,10 @@ input:focus, select:focus {
   .result-row { padding: 16px; }
   .result-row-header { gap: 12px; }
   .result-stat { gap: 8px; font-size: .86rem; }
+  .voters-page { padding-inline: 16px; }
+  .voters-page .table-card { padding: 14px; overflow: visible; }
+  .voters-page .voter-heading { display: none; }
+  .voters-page .voter-row { min-width: 0; display: grid; grid-template-columns: 1fr; gap: 8px; padding: 16px 4px; }
+  .voters-page .voter-row span { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 12px; }
+  .voters-page .voter-row span::before { content: attr(data-label); color: var(--muted); font: 500 10px "DM Mono"; letter-spacing: .08em; text-transform: uppercase; }
 }

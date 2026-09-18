@@ -157,7 +157,7 @@ func (h *PollHandler) Voters(c *gin.Context) {
 		}
 		voters = append(voters, gin.H{"name": vote.VoterName, "email": vote.VoterEmail, "selectedOption": poll.Options[vote.OptionIndex]})
 	}
-	c.JSON(http.StatusOK, gin.H{"pollId": poll.ID.Hex(), "question": poll.Question, "totalVoters": len(voters), "voters": voters})
+	c.JSON(http.StatusOK, gin.H{"voters": voters})
 }
 
 func (h *PollHandler) Report(c *gin.Context) {

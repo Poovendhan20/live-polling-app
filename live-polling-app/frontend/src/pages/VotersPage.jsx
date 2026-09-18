@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getPollVoters } from '../api/polls';
 
 export default function VotersPage() {
@@ -14,17 +14,5 @@ export default function VotersPage() {
   if (error) return <main className="narrow-page"><div className="error">{error}</div></main>;
   if (!data) return <main className="narrow-page"><p>Loading voters...</p></main>;
 
-  return (
-    <main className="narrow-page creator-page">
-      <Link className="back-link" to="/dashboard">Back to My Polls</Link>
-      <span className="eyebrow">VOTER INFORMATION</span>
-      <h1>{data.question}</h1>
-      <div className="summary-card card-surface"><span>Total voters</span><strong>{data.totalVoters}</strong></div>
-      <div className="table-card card-surface">
-        <div className="voter-row voter-heading"><span>Name</span><span>Email</span><span>Selected option</span></div>
-        {data.voters.map((voter, index) => <div className="voter-row" key={`${voter.email}-${index}`}><span>{voter.name}</span><span>{voter.email}</span><span>{voter.selectedOption}</span></div>)}
-        {data.voters.length === 0 && <p className="empty-state">No votes yet.</p>}
-      </div>
-    </main>
-  );
+  return <main className="narrow-page voters-page"><h1>Voters</h1><div className="table-card card-surface"><div className="voter-row voter-heading"><span>Name</span><span>Email</span><span>Selected Option</span></div>{data.voters.map((voter, index) => <div className="voter-row" key={`${voter.email}-${index}`}><span data-label="Name">{voter.name}</span><span data-label="Email">{voter.email}</span><span data-label="Selected Option">{voter.selectedOption}</span></div>)}{data.voters.length === 0 && <p className="empty-state">No voters yet.</p>}</div></main>;
 }
