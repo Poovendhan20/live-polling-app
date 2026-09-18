@@ -5,13 +5,15 @@ import (
 	"os"
 	"time"
 
+	"live-polling-app/backend/internal/repository"
+
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type Config struct{ Port, MongoURI, RedisAddr, JWTSecret string }
+type Config struct{ Port, MongoURI, JWTSecret string }
 type Clients struct {
 	Mongo *mongo.Client
 	DB    *mongo.Database
@@ -20,7 +22,7 @@ type Clients struct {
 
 func Load() Config {
 	_ = godotenv.Load()
-	return Config{Port: env("PORT", "8080"), MongoURI: env("MONGO_URI", "mongodb://localhost:27017"), RedisAddr: env("REDIS_ADDR", "localhost:6379"), JWTSecret: env("JWT_SECRET", "change-me")}
+	return Config{Port: env("PORT", "8080"), MongoURI: env("MONGO_URI", "mongodb://localhost:27017"), JWTSecret: env("JWT_SECRET", "change-me")}
 }
 func Connect(ctx context.Context, c Config) (*Clients, error) {
 	mc, err := mongo.Connect(ctx, options.Client().ApplyURI(c.MongoURI))
@@ -30,8 +32,8 @@ func Connect(ctx context.Context, c Config) (*Clients, error) {
 	if err = mc.Ping(ctx, nil); err != nil {
 		return nil, err
 	}
-	r := redis.NewClient(&redis.Options{Addr: c.RedisAddr})
-	if err = r.Ping(ctx).Err(); err != nil {
+	r, err := repository.NewRedisClient(ctx)
+	if err != nil {
 		return nil, err
 	}
 	return &Clients{Mongo: mc, DB: mc.Database("live_polling"), Redis: r}, nil

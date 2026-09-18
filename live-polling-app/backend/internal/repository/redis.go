@@ -4,10 +4,32 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
+	"os"
+
 	"github.com/redis/go-redis/v9"
 )
 
 type RedisRepo struct{ Client *redis.Client }
+
+func NewRedisClient(ctx context.Context) (*redis.Client, error) {
+	redisURL := os.Getenv("REDIS_URL")
+	if redisURL == "" {
+		return nil, fmt.Errorf("REDIS_URL is not configured")
+	}
+
+	opts, err := redis.ParseURL(redisURL)
+	if err != nil {
+		return nil, fmt.Errorf("parse REDIS_URL: %w", err)
+	}
+
+	client := redis.NewClient(opts)
+	if err := client.Ping(ctx).Err(); err != nil {
+		return nil, fmt.Errorf("redis connection failed: %w", err)
+	}
+	log.Printf("redis connection verified: %s", opts.Addr)
+	return client, nil
+}
 
 func (r *RedisRepo) Key(pollID string) string     { return "poll:counts:" + pollID }
 func (r *RedisRepo) Channel(pollID string) string { return "poll:events:" + pollID }
