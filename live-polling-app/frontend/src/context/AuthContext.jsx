@@ -4,7 +4,7 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
 	const [token, setToken] = useState(localStorage.getItem('token'));
 	const [profile, setProfile] = useState(null);
-	const complete = response => { localStorage.setItem('token', response.data.token); setToken(response.data.token); };
+	const complete = response => { localStorage.setItem('token', response.data.token); setProfile(null); setToken(response.data.token); };
 	const login = data => loginRequest(data).then(complete);
 	const signup = data => signupRequest(data).then(complete);
 	const logout = () => { localStorage.removeItem('token'); setToken(null); setProfile(null); };

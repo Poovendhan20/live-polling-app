@@ -23,8 +23,8 @@ type AuthService struct {
 func (s *AuthService) Profile(ctx context.Context, userID primitive.ObjectID) (models.User, error) {
 	var user models.User
 	err := s.Users.FindOne(ctx, bson.M{"_id": userID}).Decode(&user)
-	if user.DisplayName == "" {
-		user.DisplayName = "Poovendhan R"
+	if err == nil && user.DisplayName == "" {
+		user.DisplayName = strings.Split(user.Email, "@")[0]
 	}
 	return user, err
 }

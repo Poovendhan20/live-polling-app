@@ -6,8 +6,8 @@ export default function CreatorSidebar({ pollId }) {
   const { profile, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
-  const name = profile?.displayName || 'Poovendhan R';
-  const email = profile?.email || 'existing account';
+  const name = profile?.displayName || profile?.email?.split('@')[0] || '';
+  const email = profile?.email || '';
   const close = () => setOpen(false);
   const linkClass = ({ isActive }) => isActive ? 'active' : undefined;
 

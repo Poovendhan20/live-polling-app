@@ -8,6 +8,7 @@ export default function Navbar() {
   const location = useLocation();
   const [hasCreatedPolls, setHasCreatedPolls] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const name = profile?.displayName || profile?.email?.split('@')[0] || '';
 
   useEffect(() => {
     if (!token) {
@@ -62,7 +63,7 @@ export default function Navbar() {
         <Link to="/join">Explore Polls</Link>
         <Link to="/create">Create Poll</Link>
         {hasCreatedPolls && <NavLink to="/dashboard">My Polls</NavLink>}
-        <div className="account-menu"><button className="account-trigger" type="button" onClick={() => setAccountOpen((open) => !open)}><span className="avatar">{(profile?.displayName || 'Poovendhan R').slice(0, 1).toUpperCase()}</span><span className="account-trigger-label">{profile?.displayName || 'Poovendhan R'}</span></button>{accountOpen && <div className="account-dropdown"><Link to="/account" onClick={() => setAccountOpen(false)}>Account</Link><Link to="/settings" onClick={() => setAccountOpen(false)}>Settings</Link><button type="button" onClick={logout}>Sign Out</button></div>}</div>
+        <div className="account-menu"><button className="account-trigger" type="button" onClick={() => setAccountOpen((open) => !open)}><span className="avatar">{name.slice(0, 1).toUpperCase()}</span><span className="account-trigger-label">{name}</span></button>{accountOpen && <div className="account-dropdown"><Link to="/account" onClick={() => setAccountOpen(false)}>Account</Link><Link to="/settings" onClick={() => setAccountOpen(false)}>Settings</Link><button type="button" onClick={logout}>Sign Out</button></div>}</div>
       </div>
     </nav>
   );

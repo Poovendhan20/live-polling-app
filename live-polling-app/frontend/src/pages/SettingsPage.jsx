@@ -7,22 +7,23 @@ export default function SettingsPage() {
   const navigate = useNavigate();
   const { profile, updateDisplayName } = useAuth();
   const [editing, setEditing] = useState(false);
-  const [name, setName] = useState('Poovendhan R');
+  const profileName = profile?.displayName || profile?.email?.split('@')[0] || '';
+  const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (profile?.displayName) setName(profile.displayName);
-  }, [profile]);
+    if (profile) setName(profileName);
+  }, [profile, profileName]);
 
   const beginEdit = () => {
-    setName(profile?.displayName || 'Poovendhan R');
+    setName(profileName);
     setError('');
     setEditing(true);
   };
 
   const cancel = () => {
-    setName(profile?.displayName || 'Poovendhan R');
+    setName(profileName);
     setError('');
     setEditing(false);
   };
@@ -62,7 +63,7 @@ export default function SettingsPage() {
               {error && <div className="error">{error}</div>}
             </form>
           ) : (
-            <div className="settings-value-row"><strong>{profile?.displayName || 'Poovendhan R'}</strong><button className="small-action" type="button" onClick={beginEdit}>Edit</button></div>
+            <div className="settings-value-row"><strong>{profileName}</strong><button className="small-action" type="button" onClick={beginEdit}>Edit</button></div>
           )}
         </div>
         <div className="settings-field"><span className="settings-label">Email</span><strong className="settings-value">{profile?.email || 'Signed-in account'}</strong></div>
