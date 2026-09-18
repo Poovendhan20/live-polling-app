@@ -13,6 +13,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+var ErrPollNotFound = errors.New("poll not found")
+
 type PollService struct {
 	Polls *mongo.Collection
 	Votes *mongo.Collection
@@ -76,6 +78,12 @@ func (s *PollService) Delete(ctx context.Context, id primitive.ObjectID) error {
 	if _, err := s.Votes.DeleteMany(ctx, bson.M{"poll_id": id}); err != nil {
 		return err
 	}
-	_, err := s.Polls.DeleteOne(ctx, bson.M{"_id": id})
-	return err
+	result, err := s.Polls.DeleteOne(ctx, bson.M{"_id": id})
+	if err != nil {
+		return err
+	}
+	if result.DeletedCount != 1 {
+		return ErrPollNotFound
+	}
+	return nil
 }

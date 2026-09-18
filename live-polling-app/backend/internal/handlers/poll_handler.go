@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"live-polling-app/backend/internal/services"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -95,6 +97,11 @@ func (h *PollHandler) Delete(c *gin.Context) {
 		return
 	}
 	if err := h.Service.Delete(c, id); err != nil {
+		if errors.Is(err, services.ErrPollNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "poll not found"})
+			return
+		}
+		log.Printf("delete poll %s failed: %v", id.Hex(), err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to delete poll"})
 		return
 	}
