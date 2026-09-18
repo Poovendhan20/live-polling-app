@@ -3,9 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getPoll } from '../api/polls';
 import useWebSocket from '../hooks/useWebSocket';
 import PollResultsChart from '../components/PollResultsChart';
+import CreatorSidebar from '../components/CreatorSidebar';
+import useAuth from '../hooks/useAuth';
 
 export default function ResultsPage() {
   const { id } = useParams();
+  const { token } = useAuth();
   const navigate = useNavigate();
   const [poll, setPoll] = useState();
   const [shareOpen, setShareOpen] = useState(false);
@@ -60,11 +63,11 @@ export default function ResultsPage() {
     percentage: totalVotes ? (Number((poll.counts || {})[index] || 0) / totalVotes) * 100 : 0,
   }));
 
-  return (
-    <main className="narrow-page results-page">
-      <button className="back-arrow" type="button" aria-label="Go back" onClick={() => navigate(-1)}>←</button>
+  const resultsContent = (
+    <>
+      <div className="page-back-heading"><button className="back-arrow" type="button" aria-label="Go back" onClick={() => navigate(-1)}>←</button><h1>Results</h1></div>
       <span className="eyebrow">LIVE RESULTS</span>
-      <h1>{poll.poll.question}</h1>
+      <h2>{poll.poll.question}</h2>
       {poll.isClosed && <div className="notice">This poll has ended.</div>}
 
       <div className="summary-grid">
@@ -111,6 +114,7 @@ export default function ResultsPage() {
           </div>
         ))}
       </div>
-    </main>
+      </>
   );
+  return token ? <main className="dashboard-shell results-shell"><CreatorSidebar pollId={id} /><section className="content-panel results-page">{resultsContent}</section></main> : <main className="narrow-page results-page">{resultsContent}</main>;
 }

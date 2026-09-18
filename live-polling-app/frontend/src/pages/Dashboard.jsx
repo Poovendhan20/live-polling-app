@@ -8,7 +8,7 @@ function ShareDialog({ poll, onClose }) {
   const [copied, setCopied] = useState(false);
   const url = `${window.location.origin}/vote/${poll.id}`;
   const copy = async () => { await navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 1400); };
-  const share = async () => { if (navigator.share) { try { await navigator.share({ title: 'PollPop poll', text: poll.question, url }); return; } catch {} } await copy(); };
+  const share = async () => { if (navigator.share) { try { await navigator.share({ title: 'LivePoll poll', text: poll.question, url }); return; } catch {} } await copy(); };
   return <div className="modal-backdrop" role="presentation" onClick={onClose}><div className="share-modal card-surface" role="dialog" aria-modal="true" onClick={(event) => event.stopPropagation()}><button className="modal-close" type="button" onClick={onClose}>Close</button><span className="eyebrow">SHARE POLL</span><h2>{poll.question}</h2><p className="poll-id-line">Poll ID: {poll.id}</p><div className="share-link">{url}</div><div className="share-actions"><button className="button" type="button" onClick={copy}>{copied ? 'Link copied!' : 'Copy Link'}</button><button className="small-action" type="button" onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`${poll.question} ${url}`)}`, '_blank')}>WhatsApp</button><button className="small-action" type="button" onClick={share}>Native Share</button></div></div></div>;
 }
 

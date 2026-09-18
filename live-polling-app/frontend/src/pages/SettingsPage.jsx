@@ -49,9 +49,8 @@ export default function SettingsPage() {
 
   return (
     <main className="dashboard-shell"><CreatorSidebar /><section className="content-panel narrow-content settings-page">
-      <button className="back-arrow" type="button" aria-label="Go back" onClick={() => navigate(-1)}>←</button>
+      <div className="page-back-heading"><button className="back-arrow" type="button" aria-label="Go back" onClick={() => navigate(-1)}>←</button><h1>Account Settings</h1></div>
       <span className="eyebrow">ACCOUNT SETTINGS</span>
-      <h1>Account Settings</h1>
       <section className="card-surface settings-form">
         <h2>Profile</h2>
         <div className="settings-field">

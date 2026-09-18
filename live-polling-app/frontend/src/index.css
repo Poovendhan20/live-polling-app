@@ -477,21 +477,19 @@ input:focus, select:focus {
 .sidebar-nav a:hover { background: rgba(242, 106, 72, .08); color: var(--ink); transform: translateX(2px); }
 .sidebar-nav a.active { background: rgba(242, 106, 72, .13); color: var(--primary-strong); font-weight: 700; }
 .sidebar-disabled { display: flex; align-items: center; min-height: 48px; padding: 12px 14px; color: #a7a9b3; cursor: not-allowed; }
-.sidebar-account { display: grid; gap: 14px; }
-.sidebar-account-profile { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 12px 8px; }
-.sidebar-account-profile > span:last-child { display: grid; gap: 2px; min-width: 0; }
-.sidebar-account-profile strong, .sidebar-account-profile small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sidebar-account-profile small { color: var(--muted); }
-.sidebar-account-actions { display: grid; gap: 4px; padding-top: 12px; border-top: 1px solid var(--line); }
-.sidebar-account-actions a, .sidebar-account-actions button { border: 0; background: transparent; color: var(--muted); text-align: left; padding: 9px 8px; border-radius: 9px; cursor: pointer; }
-.sidebar-account-actions a:hover, .sidebar-account-actions button:hover { background: var(--bg-soft); color: var(--ink); }
 .mobile-creator-header, .drawer-scrim { display: none; }
+.creator-header { position: fixed; top: 0; right: 0; left: 272px; z-index: 10; height: 72px; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(24px, 5vw, 72px); border-bottom: 1px solid var(--line); background: rgba(255, 250, 243, .92); backdrop-filter: blur(12px); }
+.creator-header-brand { display: flex; align-items: center; gap: 12px; }
+.creator-header .menu-toggle { display: none; }
+.creator-account-dropdown { top: calc(100% + 8px); right: 0; min-width: 220px; }
+.creator-account-dropdown strong, .creator-account-dropdown small { display: block; padding: 7px 10px; }
+.creator-account-dropdown small { color: var(--muted); border-bottom: 1px solid var(--line); padding-top: 0; overflow: hidden; text-overflow: ellipsis; }
 
 .content-panel {
   width: 100%;
   min-width: 0;
   max-width: 1240px;
-  padding: 56px clamp(24px, 5vw, 72px) 72px;
+  padding: 128px clamp(24px, 5vw, 72px) 72px;
   margin: 0 auto;
 }
 
@@ -516,7 +514,7 @@ input:focus, select:focus {
 }
 
 .form-panel {
-  padding: 56px clamp(24px, 5vw, 72px) 72px;
+  padding: 128px clamp(24px, 5vw, 72px) 72px;
 }
 
 .empty-state {
@@ -593,6 +591,10 @@ input:focus, select:focus {
 .back-link { display: inline-block; margin-bottom: 24px; color: var(--primary-strong); font-weight: 600; }
 .settings-page { max-width: 760px; }
 .back-arrow { display: block; border: 0; background: transparent; padding: 0; margin: 0 0 24px; color: var(--ink); font-size: 1.7rem; line-height: 1; cursor: pointer; }
+.page-back-heading { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+.page-back-heading .back-arrow { flex: 0 0 auto; margin: 0; padding: 8px 10px; color: var(--primary-strong); font-size: 1.8rem; border-radius: 12px; }
+.page-back-heading .back-arrow:hover { background: rgba(242, 106, 72, .1); }
+.page-back-heading h1 { margin: 0; font-size: clamp(1.9rem, 4vw, 3rem); letter-spacing: -0.05em; }
 .settings-form { gap: 24px; padding: 30px; margin-top: 24px; }
 .settings-form h2 { margin: 0; font-size: 1.2rem; }
 .settings-field { display: grid; gap: 10px; padding-top: 4px; }
@@ -629,11 +631,14 @@ input:focus, select:focus {
   .drawer-scrim { display: block; position: fixed; inset: 0; z-index: 11; border: 0; background: rgba(28, 29, 43, .34); cursor: pointer; }
   .mobile-creator-header { display: flex; position: sticky; top: 0; z-index: 10; align-items: center; gap: 14px; height: 64px; padding: 0 18px; border-bottom: 1px solid var(--line); background: rgba(255, 250, 243, .94); backdrop-filter: blur(12px); }
   .menu-toggle { border: 0; background: transparent; padding: 8px 4px; color: var(--ink); font-size: 1.45rem; line-height: 1; cursor: pointer; }
+  .creator-header { left: 0; height: 64px; padding: 0 18px; }
+  .creator-header .menu-toggle { display: inline-flex; }
+  .creator-header .account-trigger-label { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .summary-grid, .stats-grid { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
 }
 
 @media (max-width: 700px) {
-  .content-panel { padding: 32px 16px 48px; }
+  .content-panel, .form-panel { padding: 104px 16px 48px; }
   .choice-grid,
   .deadline-grid,
   .summary-grid,

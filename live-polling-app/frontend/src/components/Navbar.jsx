@@ -20,14 +20,18 @@ export default function Navbar() {
       .catch(() => setHasCreatedPolls(false));
   }, [token]);
 
-  if (location.pathname.startsWith('/vote/') || location.pathname.startsWith('/results/') || location.pathname === '/join') {
-    return <nav className="topbar"><span className="brand">PollPop</span></nav>;
+  if (location.pathname.startsWith('/results/')) {
+    return token ? null : <nav className="topbar"><span className="brand">LivePoll</span></nav>;
+  }
+
+  if (location.pathname.startsWith('/vote/') || location.pathname === '/join') {
+    return <nav className="topbar"><span className="brand">LivePoll</span></nav>;
   }
 
   if (!token) {
     return (
       <nav className="topbar">
-        <Link to="/choice" className="brand">PollPop</Link>
+        <Link to="/choice" className="brand">LivePoll</Link>
         <div>
           <Link to="/login">Log in</Link>
           <Link to="/signup" className="button small">Get started</Link>
@@ -42,7 +46,7 @@ export default function Navbar() {
 
   return (
     <nav className="topbar">
-      <Link to="/choice" className="brand">PollPop</Link>
+      <Link to="/choice" className="brand">LivePoll</Link>
       <div className="nav-links">
         <Link to="/choice">Home</Link>
         <Link to="/join">Explore Polls</Link>
