@@ -36,34 +36,37 @@ export default function CreatePoll() {
     <main className="dashboard-shell create-shell">
       <CreatorSidebar />
       <section className="content-panel form-panel">
-        <div className="section-heading">
-          <div>
-            <span className="eyebrow">NEW POLL</span>
-            <h1>Ask something worth answering.</h1>
-          </div>
+        <div className="create-page-header">
+          <span className="eyebrow">NEW POLL</span>
+          <h1>Create Poll</h1>
+          <p>Ask something worth answering.</p>
         </div>
 
-        <form onSubmit={submit} className="poll-form card-surface">
-          <label>
-            Question
+        <form onSubmit={submit} className="poll-form create-form card-surface">
+          <label className="form-field">
+            <span>Question</span>
             <input value={question} onChange={(e) => setQuestion(e.target.value)} minLength="5" required placeholder="What should we decide together?" />
           </label>
 
           <div className="option-stack">
             {options.map((o, i) => (
-              <input
-                key={i}
-                value={o}
-                onChange={(e) => setOptions((prev) => prev.map((v, j) => (j === i ? e.target.value : v)))}
-                required={i < 2}
-                placeholder={`Option ${i + 1}`}
-              />
+              <label className="form-field" key={i}>
+                <span>Option {i + 1}</span>
+                <input
+                  value={o}
+                  onChange={(e) => setOptions((prev) => prev.map((v, j) => (j === i ? e.target.value : v)))}
+                  required={i < 2}
+                  placeholder={`Enter option ${i + 1}`}
+                />
+              </label>
             ))}
           </div>
 
-          <div className="deadline-grid">
-            <label>
-              Deadline
+          <button type="button" className="add-option-button" onClick={() => setOptions((prev) => [...prev, ''])}>+ Add option</button>
+
+          <div className="deadline-grid create-deadline-grid">
+            <label className="form-field">
+              <span>Deadline</span>
               <select value={deadlineHours} onChange={(e) => setDeadlineHours(e.target.value)}>
                 <option value="">No Deadline</option>
                 <option value="24">1 Day</option>
@@ -72,17 +75,14 @@ export default function CreatePoll() {
                 <option value="96">4 Days</option>
               </select>
             </label>
-            <label>
-              Custom date & time
+            <label className="form-field">
+              <span>Custom date &amp; time</span>
               <input type="datetime-local" value={customDeadline} onChange={(e) => setCustomDeadline(e.target.value ? new Date(e.target.value).toISOString() : '')} />
             </label>
           </div>
 
-          <div className="inline-actions">
-            <button type="button" className="text-button" onClick={() => setOptions((prev) => [...prev, ''])}>+ Add option</button>
-            <button className="button">Create and share</button>
-          </div>
           {error && <div className="error">{error}</div>}
+          <div className="create-form-footer"><button className="button create-submit">Create &amp; Share</button></div>
         </form>
       </section>
     </main>
