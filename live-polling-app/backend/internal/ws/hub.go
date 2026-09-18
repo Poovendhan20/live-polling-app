@@ -2,9 +2,10 @@ package ws
 
 import (
 	"context"
+	"sync"
+
 	"github.com/gorilla/websocket"
 	"github.com/redis/go-redis/v9"
-	"sync"
 )
 
 type Hub struct {
@@ -41,15 +42,20 @@ func (h *Hub) Broadcast(pollID string, message []byte) {
 }
 func (h *Hub) Subscribe(ctx context.Context, pollID string) {
 	sub := h.Redis.Subscribe(ctx, "poll:events:"+pollID)
+	if sub == nil {
+		return
+	}
+	defer sub.Close()
 	ch := sub.Channel()
 	for {
 		select {
 		case <-ctx.Done():
 			return
-		case msg := <-ch:
-			if msg != nil {
-				h.Broadcast(pollID, []byte(msg.Payload))
+		case msg, ok := <-ch:
+			if !ok || msg == nil {
+				return
 			}
+			h.Broadcast(pollID, []byte(msg.Payload))
 		}
 	}
 }

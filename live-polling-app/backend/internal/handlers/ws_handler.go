@@ -1,10 +1,12 @@
 package handlers
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
+	"context"
 	"live-polling-app/backend/internal/ws"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
 
 type WSHandler struct{ Hub *ws.Hub }
@@ -18,7 +20,9 @@ func (h *WSHandler) Connect(c *gin.Context) {
 	}
 	id := c.Param("id")
 	h.Hub.Join(id, conn)
-	go h.Hub.Subscribe(c, id)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go h.Hub.Subscribe(ctx, id)
 	defer h.Hub.Leave(id, conn)
 	for {
 		if _, _, e = conn.ReadMessage(); e != nil {
