@@ -552,6 +552,16 @@ input:focus, select:focus {
 .compact-page { max-width: 640px; }
 .creator-page { max-width: 980px; }
 .back-link { display: inline-block; margin-bottom: 24px; color: var(--primary-strong); font-weight: 600; }
+.settings-page { max-width: 760px; }
+.back-arrow { display: block; border: 0; background: transparent; padding: 0; margin: 0 0 24px; color: var(--ink); font-size: 1.7rem; line-height: 1; cursor: pointer; }
+.settings-form { gap: 24px; padding: 30px; margin-top: 24px; }
+.settings-form h2 { margin: 0; font-size: 1.2rem; }
+.settings-field { display: grid; gap: 10px; padding-top: 4px; }
+.settings-label { color: var(--muted); font-size: .86rem; font-weight: 600; }
+.settings-value-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; min-height: 44px; }
+.settings-value { overflow-wrap: anywhere; }
+.profile-edit-form { display: grid; gap: 12px; }
+.settings-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .identity-page { max-width: 620px; }
 .identity-form, .settings-form, .account-card { display: grid; gap: 16px; padding: 26px; margin-top: 24px; }
 .identity-form label, .settings-form label { display: grid; gap: 8px; font-weight: 600; }

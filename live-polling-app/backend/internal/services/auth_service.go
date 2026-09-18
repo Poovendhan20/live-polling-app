@@ -19,6 +19,27 @@ type AuthService struct {
 	Secret string
 }
 
+func (s *AuthService) Profile(ctx context.Context, userID primitive.ObjectID) (models.User, error) {
+	var user models.User
+	err := s.Users.FindOne(ctx, bson.M{"_id": userID}).Decode(&user)
+	if user.DisplayName == "" {
+		user.DisplayName = "Poovendhan R"
+	}
+	return user, err
+}
+
+func (s *AuthService) UpdateDisplayName(ctx context.Context, userID primitive.ObjectID, displayName string) (models.User, error) {
+	displayName = strings.TrimSpace(displayName)
+	if displayName == "" {
+		return models.User{}, errors.New("profile name cannot be empty")
+	}
+	_, err := s.Users.UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$set": bson.M{"display_name": displayName}})
+	if err != nil {
+		return models.User{}, err
+	}
+	return s.Profile(ctx, userID)
+}
+
 func (s *AuthService) Signup(ctx context.Context, email, password string) (string, error) {
 	email = strings.ToLower(strings.TrimSpace(email))
 	if !strings.Contains(email, "@") || !validPassword(password) {
