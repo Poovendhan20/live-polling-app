@@ -51,3 +51,16 @@ func (h *PollHandler) Get(c *gin.Context) {
 	}
 	c.JSON(200, response)
 }
+func (h *PollHandler) My(c *gin.Context) {
+	userID, ok := c.Get("userID")
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	polls, e := h.Service.ListByOwner(c, userID.(primitive.ObjectID))
+	if e != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to load polls"})
+		return
+	}
+	c.JSON(http.StatusOK, polls)
+}

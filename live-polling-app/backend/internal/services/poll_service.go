@@ -3,13 +3,14 @@ package services
 import (
 	"context"
 	"errors"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"live-polling-app/backend/internal/models"
 	"live-polling-app/backend/internal/repository"
 	"strings"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type PollService struct {
@@ -37,4 +38,16 @@ func (s *PollService) Get(ctx context.Context, id primitive.ObjectID) (models.Po
 	var p models.Poll
 	e := s.Polls.FindOne(ctx, bson.M{"_id": id}).Decode(&p)
 	return p, e
+}
+func (s *PollService) ListByOwner(ctx context.Context, owner primitive.ObjectID) ([]models.Poll, error) {
+	cur, e := s.Polls.Find(ctx, bson.M{"owner_id": owner})
+	if e != nil {
+		return nil, e
+	}
+	defer cur.Close(ctx)
+	var polls []models.Poll
+	if e = cur.All(ctx, &polls); e != nil {
+		return nil, e
+	}
+	return polls, nil
 }

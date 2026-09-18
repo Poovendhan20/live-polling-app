@@ -11,6 +11,7 @@ func Register(r *gin.Engine, a *handlers.AuthHandler, p *handlers.PollHandler, v
 	r.GET("/health", func(c *gin.Context) { c.JSON(200, gin.H{"status": "ok"}) })
 	r.POST("/api/auth/signup", a.Signup)
 	r.POST("/api/auth/login", a.Login)
+	r.GET("/api/polls/mine", middleware.Auth(secret), p.My)
 	r.GET("/api/polls/:id", middleware.OptionalAuth(secret), p.Get)
 	r.POST("/api/polls/:id/votes", middleware.Auth(secret), v.Vote)
 	r.GET("/ws/:id", w.Connect)
