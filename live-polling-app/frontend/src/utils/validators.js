@@ -1,0 +1,2 @@
+export function getPasswordStrength(password = '') { const groups = [/[A-Z]/, /[a-z]/, /\d/, /[^A-Za-z\d]/].filter(rule => rule.test(password)).length; if (password.length < 6 || groups < 2) return 'Weak'; if (password.length >= 10 && groups === 4) return 'Strong'; if (password.length >= 8 && groups >= 2) return 'Medium'; return 'Weak'; }
+export const isEmail = value => /\S+@\S+\.\S+/.test(value);

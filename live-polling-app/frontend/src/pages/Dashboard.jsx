@@ -1,0 +1,1 @@
+import { Link } from 'react-router-dom'; export default function Dashboard(){return <main className="narrow-page"><span className="eyebrow">DASHBOARD</span><h1>Your polls, in one place.</h1><Link className="button" to="/create">Create a poll</Link></main>}

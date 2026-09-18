@@ -1,0 +1,2 @@
+import { Link } from 'react-router-dom'; import useAuth from '../hooks/useAuth';
+export default function Navbar(){const {token,logout}=useAuth();return <nav><Link to="/choice" className="brand">Livepoll</Link><div>{token?<><Link to="/choice">Explore</Link><button className="link-button" onClick={logout}>Sign out</button></>:<><Link to="/login">Log in</Link><Link to="/signup" className="button small">Get started</Link></>}</div></nav>}

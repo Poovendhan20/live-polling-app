@@ -1,0 +1,1 @@
+export default function PollCard({ poll, onClick }) { return <button className="poll-card" onClick={onClick}><span className="eyebrow">LIVE POLL</span><h3>{poll.question}</h3><span>{poll.options.length} choices</span></button>; }

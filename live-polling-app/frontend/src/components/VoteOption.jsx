@@ -1,0 +1,1 @@
+export default function VoteOption({ label, selected, onClick }) { return <button className={`vote-option ${selected ? 'selected' : ''}`} onClick={onClick}>{label}<span>{selected ? 'Selected' : 'Choose'}</span></button>; }

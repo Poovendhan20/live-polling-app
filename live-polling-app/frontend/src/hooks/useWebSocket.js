@@ -1,0 +1,2 @@
+import { useEffect, useState } from 'react';
+export default function useWebSocket(pollId) { const [counts, setCounts] = useState({}); useEffect(() => { if (!pollId) return; const base = import.meta.env.VITE_WS_URL || 'ws://localhost:8080/ws'; const socket = new WebSocket(`${base}/${pollId}`); socket.onmessage = event => setCounts(JSON.parse(event.data)); return () => socket.close(); }, [pollId]); return counts; }
