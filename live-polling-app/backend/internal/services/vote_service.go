@@ -37,9 +37,6 @@ func (s *VoteService) PollClosed(poll models.Poll) bool {
 }
 
 func (s *VoteService) Vote(ctx context.Context, poll models.Poll, index int, userID primitive.ObjectID, fp, voterName, voterEmail string) (map[string]int64, error) {
-	if userID.IsZero() {
-		return nil, errors.New("authentication required")
-	}
 	voterName = strings.TrimSpace(voterName)
 	voterEmail = strings.TrimSpace(strings.ToLower(voterEmail))
 	if voterName == "" {
@@ -54,10 +51,12 @@ func (s *VoteService) Vote(ctx context.Context, poll models.Poll, index int, use
 	if index < 0 || index >= len(poll.Options) {
 		return nil, errors.New("invalid option")
 	}
-	if has, e := s.HasUserVoted(ctx, poll.ID, userID); e != nil {
-		return nil, e
-	} else if has {
-		return nil, errors.New("you have already voted on this poll")
+	if !userID.IsZero() {
+		if has, e := s.HasUserVoted(ctx, poll.ID, userID); e != nil {
+			return nil, e
+		} else if has {
+			return nil, errors.New("you have already voted on this poll")
+		}
 	}
 	v := models.Vote{ID: primitive.NewObjectID(), PollID: poll.ID, UserID: userID, VoterName: voterName, VoterEmail: voterEmail, OptionIndex: index, Fingerprint: fp, CreatedAt: primitive.NewDateTimeFromTime(time.Now())}
 	if _, e := s.Votes.InsertOne(ctx, v); e != nil {

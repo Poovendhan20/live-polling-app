@@ -16,7 +16,7 @@ func Register(r *gin.Engine, a *handlers.AuthHandler, p *handlers.PollHandler, v
 	r.GET("/api/polls/:id/voters", middleware.Auth(secret), p.Voters)
 	r.GET("/api/polls/:id/analytics", middleware.Auth(secret), p.Analytics)
 	r.GET("/api/polls/:id/report", middleware.Auth(secret), p.Report)
-	r.POST("/api/polls/:id/votes", middleware.Auth(secret), v.Vote)
+	r.POST("/api/polls/:id/votes", middleware.OptionalAuth(secret), v.Vote)
 	r.GET("/ws/:id", w.Connect)
 	auth := r.Group("/api/polls", middleware.Auth(secret))
 	auth.POST("", p.Create)

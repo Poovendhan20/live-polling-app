@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { getPoll, vote } from '../api/polls';
 import VoteOption from '../components/VoteOption';
-import useAuth from '../hooks/useAuth';
 
 export default function VotePage() {
   const { id } = useParams();
-  const { token } = useAuth();
-  const nav = useNavigate();
   const [data, setData] = useState();
   const [selected, setSelected] = useState();
   const [message, setMessage] = useState('');
@@ -18,17 +15,13 @@ export default function VotePage() {
   const [identityError, setIdentityError] = useState('');
 
   useEffect(() => {
-    if (!token) {
-      nav('/login', { replace: true, state: { from: { pathname: `/vote/${id}` } } });
-      return;
-    }
     getPoll(id)
       .then((r) => {
         setData(r.data);
         if (r.data.hasVoted) setMessage('Your vote is submitted');
       })
       .catch(() => setMessage('Poll not found'));
-  }, [id, nav, token]);
+  }, [id]);
 
   const submit = async () => {
     if (selected === undefined) return;

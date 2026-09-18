@@ -12,7 +12,8 @@ import (
 type MongoRepo struct{ DB *mongo.Database }
 
 func (r *MongoRepo) EnsureIndexes(ctx context.Context) error {
-	_, err := r.DB.Collection("votes").Indexes().CreateOne(ctx, mongo.IndexModel{Keys: bson.D{{Key: "poll_id", Value: 1}, {Key: "user_id", Value: 1}}, Options: options.Index().SetUnique(true)})
+	_, _ = r.DB.Collection("votes").Indexes().DropOne(ctx, "poll_id_1_user_id_1")
+	_, err := r.DB.Collection("votes").Indexes().CreateOne(ctx, mongo.IndexModel{Keys: bson.D{{Key: "poll_id", Value: 1}, {Key: "user_id", Value: 1}}, Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.M{"user_id": bson.M{"$exists": true}})})
 	if err != nil {
 		return err
 	}

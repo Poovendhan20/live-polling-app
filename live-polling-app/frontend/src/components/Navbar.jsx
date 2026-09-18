@@ -19,6 +19,10 @@ export default function Navbar() {
       .catch(() => setHasCreatedPolls(false));
   }, [token]);
 
+  if (location.pathname.startsWith('/vote/') || location.pathname.startsWith('/results/') || location.pathname === '/join') {
+    return <nav className="topbar"><span className="brand">PollPop</span></nav>;
+  }
+
   if (!token) {
     return (
       <nav className="topbar">
@@ -29,10 +33,6 @@ export default function Navbar() {
         </div>
       </nav>
     );
-  }
-
-  if (location.pathname.startsWith('/vote/') || location.pathname.startsWith('/results/')) {
-    return <nav className="topbar"><Link to="/choice" className="brand">PollPop</Link></nav>;
   }
 
   return (
