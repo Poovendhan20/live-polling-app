@@ -1,2 +1,26 @@
-import { useState } from 'react'; import { useNavigate } from 'react-router-dom';
-export default function JoinPollPage(){const [value,setValue]=useState('');const nav=useNavigate();const submit=e=>{e.preventDefault();const raw=value.trim();const id=raw.includes('/')?raw.split('?')[0].split('/').filter(Boolean).pop():raw;if(id)nav(`/vote/${id}`)};return <main className="narrow-page"><span className="eyebrow">PUBLIC ACCESS</span><h1>Bring a poll into focus.</h1><p>Paste the share link or enter its ID to cast your vote.</p><form onSubmit={submit} className="inline-form"><input value={value} onChange={e=>setValue(e.target.value)} placeholder="Poll link or ID" required/><button className="button">Open poll</button></form></main>}
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+export default function JoinPollPage() {
+  const [value, setValue] = useState('');
+  const nav = useNavigate();
+
+  const submit = (e) => {
+    e.preventDefault();
+    const raw = value.trim();
+    const id = raw.includes('/') ? raw.split('?')[0].split('/').filter(Boolean).pop() : raw;
+    if (id) nav(`/vote/${id}`);
+  };
+
+  return (
+    <main className="narrow-page compact-page">
+      <span className="eyebrow">PUBLIC ACCESS</span>
+      <h1>Bring a poll into focus.</h1>
+      <p>Paste the share link or enter its ID to cast your vote.</p>
+      <form onSubmit={submit} className="inline-form card-surface">
+        <input value={value} onChange={(e) => setValue(e.target.value)} placeholder="Poll link or ID" required />
+        <button className="button">Open poll</button>
+      </form>
+    </main>
+  );
+}

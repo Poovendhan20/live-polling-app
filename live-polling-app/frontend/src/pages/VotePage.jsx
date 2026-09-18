@@ -1,3 +1,68 @@
-import { useEffect,useState } from 'react'; import { useParams,Link,useNavigate } from 'react-router-dom'; import { getPoll,vote } from '../api/polls'; import VoteOption from '../components/VoteOption';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { getPoll, vote } from '../api/polls';
+import VoteOption from '../components/VoteOption';
 import useAuth from '../hooks/useAuth';
-export default function VotePage(){const {id}=useParams();const {token}=useAuth();const nav=useNavigate();const [data,setData]=useState();const [selected,setSelected]=useState();const [message,setMessage]=useState('');useEffect(()=>{if(!token){nav('/login',{replace:true,state:{from:{pathname:`/vote/${id}`}}});return;}getPoll(id).then(r=>{setData(r.data);if(r.data.hasVoted)setMessage('Your vote is submitted');}).catch(()=>setMessage('Poll not found'))},[id,nav,token]);if(!data)return <main className="narrow-page"><p>{message||'Loading poll...'}</p></main>;const submit=async()=>{if(selected===undefined)return;try{await vote(id,selected);setMessage('Your vote is submitted');setSelected(undefined);}catch(e){setMessage(e.response?.data?.error||'Could not record vote')}};const hasVoted = Boolean(data.hasVoted || message === 'Your vote is submitted');return <main className="narrow-page"><span className="eyebrow">CAST YOUR VOTE</span><h1>{data.poll.question}</h1>{!hasVoted && <><div className="vote-list">{data.poll.options.map((o,i)=><VoteOption key={o} label={o} selected={selected===i} onClick={()=>setSelected(i)}/>)}</div><button className="button" onClick={submit}>Submit vote</button></>}{message&&<p className="notice">{message} <Link to={`/results/${id}`}>View live results</Link></p>}</main>}
+
+export default function VotePage() {
+  const { id } = useParams();
+  const { token } = useAuth();
+  const nav = useNavigate();
+  const [data, setData] = useState();
+  const [selected, setSelected] = useState();
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    if (!token) {
+      nav('/login', { replace: true, state: { from: { pathname: `/vote/${id}` } } });
+      return;
+    }
+    getPoll(id)
+      .then((r) => {
+        setData(r.data);
+        if (r.data.hasVoted) setMessage('Your vote is submitted');
+      })
+      .catch(() => setMessage('Poll not found'));
+  }, [id, nav, token]);
+
+  const submit = async () => {
+    if (selected === undefined) return;
+    try {
+      await vote(id, selected);
+      setMessage('Your vote is submitted');
+      setSelected(undefined);
+    } catch (e) {
+      setMessage(e.response?.data?.error || 'Could not record vote');
+    }
+  };
+
+  if (!data) {
+    return <main className="narrow-page"><p>{message || 'Loading poll...'}</p></main>;
+  }
+
+  const hasVoted = Boolean(data.hasVoted || message === 'Your vote is submitted');
+  const pollClosed = Boolean(data.isClosed || data.poll?.deadlineAt);
+
+  return (
+    <main className="narrow-page">
+      <span className="eyebrow">CAST YOUR VOTE</span>
+      <h1>{data.poll.question}</h1>
+      {pollClosed && !hasVoted && <div className="notice">This poll has ended.</div>}
+      {!hasVoted && !pollClosed && (
+        <>
+          <div className="vote-list">
+            {data.poll.options.map((o, i) => (
+              <VoteOption key={o} label={o} selected={selected === i} onClick={() => setSelected(i)} />
+            ))}
+          </div>
+          <button className="button" onClick={submit}>Submit vote</button>
+        </>
+      )}
+      {message && (
+        <p className="notice">
+          {message} <Link to={`/results/${id}`}>View live results</Link>
+        </p>
+      )}
+    </main>
+  );
+}
