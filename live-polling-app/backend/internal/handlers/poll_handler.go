@@ -89,6 +89,18 @@ func (h *PollHandler) My(c *gin.Context) {
 	c.JSON(http.StatusOK, items)
 }
 
+func (h *PollHandler) Delete(c *gin.Context) {
+	id, ok := h.ownedPoll(c)
+	if !ok {
+		return
+	}
+	if err := h.Service.Delete(c, id); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to delete poll"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"deleted": true, "pollId": id.Hex()})
+}
+
 func (h *PollHandler) ownedPoll(c *gin.Context) (primitive.ObjectID, bool) {
 	userID, ok := c.Get("userID")
 	if !ok {
