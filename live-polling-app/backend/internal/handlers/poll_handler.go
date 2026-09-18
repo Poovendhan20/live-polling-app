@@ -1,10 +1,11 @@
 package handlers
 
 import (
-	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"live-polling-app/backend/internal/services"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type PollHandler struct {
@@ -40,5 +41,13 @@ func (h *PollHandler) Get(c *gin.Context) {
 		return
 	}
 	counts, _ := h.Votes.Counts(c, p)
-	c.JSON(200, gin.H{"poll": p, "counts": counts})
+	response := gin.H{"poll": p, "counts": counts}
+	if userID, ok := c.Get("userID"); ok {
+		if uid, ok := userID.(primitive.ObjectID); ok {
+			if hasVoted, err := h.Votes.HasUserVoted(c, p.ID, uid); err == nil {
+				response["hasVoted"] = hasVoted
+			}
+		}
+	}
+	c.JSON(200, response)
 }
