@@ -40,6 +40,11 @@ LivePoll is a fullstack real time polling application that allows users to creat
 - MongoDB
 - Redis
 - Docker
+## Docker Usage
+Docker is used primarily for local development and infrastructure setup.LivePoll depends on MongoDB for persistent application data and Redis for real time vote counts and Pub/Sub communication. Docker Compose allows these services to be started together in a consistent local development environment without requiring separate manual installation and configuration.The infrastructure can be started from the project root using:
+
+    docker compose up -d
+Docker is used to simplify local development and does not change the application's core backend or frontend architecture.
 
 ### Deployment
 - Vercel for the frontend
@@ -70,7 +75,7 @@ Results are updated in real time using WebSockets. When a new vote is submitted,
 ## Analytics and Reports
 Creators can view analytics for individual polls and monitor vote distribution.Poll reports can also be downloaded for further analysis and record keeping.
 
-## Project Structur
+## Project Structure
 
 live-polling-app/── frontend/── backend/── docker-compose.yml── README.md
 
