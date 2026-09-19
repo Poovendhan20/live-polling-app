@@ -72,11 +72,7 @@ Creators can view analytics for individual polls and monitor vote distribution.P
 
 ## Project Structur
 
-live-polling-app/
-├── frontend/
-├── backend/
-├── docker-compose.yml
-└── README.md
+live-polling-app/── frontend/── backend/── docker-compose.yml── README.md
 
 ## Local Development
 
