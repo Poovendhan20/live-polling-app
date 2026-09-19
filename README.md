@@ -54,7 +54,7 @@ Docker is used to simplify local development and does not change the application
 LivePoll uses WebSockets to provide real-time polling results.When a participant submits a vote, the request is processed by the Go backend and the vote is stored in MongoDB. Redis maintains the live vote counts and publishes vote events. The WebSocket server broadcasts the updated results to connected clients viewing the same poll.The React frontend listens for these updates and refreshes the displayed vote counts and progress information immediately without requiring a page refresh.
 
 ## Authentication and Access Control
-LivePoll uses JWT-based authentication for creator accounts.Authenticated users can create and manage their own polls. Poll management actions are protected so that users can only access and manage polls belonging to their account.Participants do not need to create an account to vote. They can access a poll through its shared link and submit their response.
+LivePoll uses JWT based authentication for creator accounts.Authenticated users can create and manage their own polls. Poll management actions are protected so that users can only access and manage polls belonging to their account.Participants do not need to create an account to vote. They can access a poll through its shared link and submit their response.
 
 ## Poll Management
 Creators can:
