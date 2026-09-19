@@ -1,155 +1,150 @@
 # LivePoll
 
-> Create. Share. Vote. See results live.
+## Real Time Polling Platform
+LivePoll is a fullstack real time polling application that allows users to create polls, share them with participants, collect votes, and view results instantly without refreshing the page.
 
-LivePoll is a full-stack real-time polling platform that lets users create polls, share them with participants, collect votes, and watch results update instantly without refreshing the page.
+## Features
+- User registration and login
+- Secure JWT based authentication
+- Create and manage polls
+- Share polls using unique links
+- Public voting without requiring voter accounts
+- Real-time vote and result updates
+- Live vote distribution
+- Poll deadlines and active/closed states
+- Creator only voter information
+- Poll analytics
+- Downloadable poll reports
+- Delete polls created by the authenticated user
+- Responsive interface for desktop and mobile devices
 
-## ✨ Features
-
-- 🔐 User authentication with Login & Sign Up
-- 🗳️ Create and manage polls
-- 🔗 Share polls using unique links
-- 👥 Public voting without requiring voter accounts
-- ⚡ Real-time vote and result updates
-- 📊 Live results with vote distribution
-- 👤 Creator-only voter information
-- 📈 Poll analytics
-- 📥 Download poll reports
-- ⏱️ Poll deadlines and active/closed states
-- 🗑️ Delete polls created by the user
-- 📱 Responsive design for desktop and mobile
-
-## ⚡ Real-Time Polling
-
-LivePoll uses WebSockets to deliver vote updates instantly.
-
-Participant Vote
-       ↓
-   Go Backend
-       ↓
-     MongoDB
-       ↓
-  Redis Counter
-       ↓
- WebSocket Broadcast
-       ↓
-   React UI Update
-
-This allows connected users to see updated results without manually refreshing the page.
-
-## 🛠️ Tech Stack
+## Technology Stack
 
 ### Frontend
-
 - React
 - Vite
 - JavaScript
 - CSS
+- Axios
+- React Router
+- WebSocket Client
 
 ### Backend
-
 - Go
-- Gin
+- Gin Framework
 - REST APIs
 - JWT Authentication
 - WebSockets
 
-### Data & Infrastructure
-
+### Database and Infrastructure
 - MongoDB
 - Redis
 - Docker
 
 ### Deployment
+- Vercel for the frontend
+- Render for the backend
 
-- Vercel — Frontend
-- Render — Backend
+## Real-Time Communication
+LivePoll uses WebSockets to provide real-time polling results.When a participant submits a vote, the request is processed by the Go backend and the vote is stored in MongoDB. Redis maintains the live vote counts and publishes vote events. The WebSocket server broadcasts the updated results to connected clients viewing the same poll.The React frontend listens for these updates and refreshes the displayed vote counts and progress information immediately without requiring a page refresh.
 
-## 🏗️ Architecture
+## Authentication and Access Control
+LivePoll uses JWT-based authentication for creator accounts.Authenticated users can create and manage their own polls. Poll management actions are protected so that users can only access and manage polls belonging to their account.Participants do not need to create an account to vote. They can access a poll through its shared link and submit their response.
 
-React / Vite
-     │
-     ├── REST API ────────→ Go / Gin
-     │                         │
-     │                         ├── MongoDB
-     │                         │
-     │                         └── Redis
-     │
-     └── WebSocket ───────→ Real-Time Updates
+## Poll Management
+Creators can:
+- Create polls
+- Add and manage poll options
+- Configure poll deadlines
+- Share polls
+- View live results
+- View voter information
+- View analytics
+- Download poll reports
+- Delete their own polls
 
-MongoDB provides durable vote storage, while Redis maintains fast live vote counts. WebSockets broadcast updated results to connected participants.
+## Live Results
 
-## 🔒 Authentication & Voting
+Results are updated in real time using WebSockets. When a new vote is submitted, connected users viewing the poll can see the updated vote counts without manually refreshing the page.This makes LivePoll suitable for classrooms, meetings, events, surveys, and interactive sessions.
 
-Creators authenticate using JWT-based login and signup.
+## Analytics and Reports
+Creators can view analytics for individual polls and monitor vote distribution.Poll reports can also be downloaded for further analysis and record keeping.
 
-Participants can vote through a shared poll link without creating an account.
-
-Poll management features are protected so that creators can manage only their own polls.
-
-## 🌐 Live Demo
-
-Frontend:
-https://live-polling-app-eight.vercel.app
-
-Backend:
-https://live-polling-l021.onrender.com
-
-## 📂 Project Structure
+## Project Structur
 
 live-polling-app/
-├── frontend/          # React + Vite application
-├── backend/           # Go + Gin API
+├── frontend/
+├── backend/
 ├── docker-compose.yml
 └── README.md
 
-## 🚀 Run Locally
+## Local Development
 
-### 1. Start infrastructure
+### Prerequisites
 
-docker compose up -d
+Make sure the following are installed:
+- Node.js
+- npm
+- Go
+- Docker
+- MongoDB
+- Redis
 
-### 2. Start backend
+### Start Infrastructure
 
-cd backend
-go mod tidy
-go run ./cmd/server
+From the project root:
 
-### 3. Start frontend
+    docker compose up -d
+
+### Start Backend
+
+    cd backend
+    go mod tidy
+    go run ./cmd/server
+
+### Start Frontend
 
 Open a second terminal:
 
-cd frontend
-npm install
-npm run dev
+    cd frontend
+    npm install
+    npm run dev
 
-Open:
+The frontend will be available at:
 
-http://localhost:5173
+    http://localhost:5173
 
-## 💡 Key Technical Challenge
+## Environment Variables
 
-The main challenge was implementing reliable real-time result updates.
+The backend uses the following environment variables:
 
-Initially, votes were stored successfully, but connected clients did not receive updated results automatically. The issue was traced through the WebSocket connection and real-time broadcast flow.
+    MONGO_URI
+    REDIS_ADDR
+    JWT_SECRET
+    PORT
 
-The final implementation uses Redis Pub/Sub and WebSockets to broadcast updated vote counts to clients connected to the same poll.
+The frontend uses:
 
-## 🤖 AI-Assisted Development
+    VITE_API_URL
+    VITE_WS_URL
 
-AI tools including ChatGPT and AI assistance in VS Code were used during development for:
+Do not commit sensitive environment variables or API credentials to the repository.
 
-- Debugging
-- Code suggestions
-- UI improvements
-- WebSocket troubleshooting
-- API troubleshooting
-- CORS and deployment debugging
-- Understanding implementation issues
+## Deployment
 
-All changes were tested and verified within the application.
-## 👨‍💻 Author
+Frontend:
+
+https://live-polling-app-eight.vercel.app
+
+Backend:
+
+https://live-polling-l021.onrender.com
+
+## Key Technical Challenge
+The main technical challenge was implementing reliable real-time result updates.Initially, votes were successfully stored, but connected clients did not receive updated results automatically. The issue was traced through the frontend WebSocket connection, backend WebSocket handling, Redis event broadcasting, and frontend state updates.The final implementation uses Redis Pub/Sub together with WebSockets to broadcast updated vote information to clients connected to the same poll.
+
+## AI-Assisted Development
+AI tools, including ChatGPT and AI assistance in VS Code, were used during development for debugging, code suggestions, UI improvements, WebSockettroubleshooting, API troubleshooting, CORS configuration, deployment issues, and understanding implementation problems.All generated suggestions and changes were reviewed, tested, and verified before being integrated into the application.
+
+## Author
 Poovendhan R
-
--
-⭐ LivePoll — Build a poll, share it, and watch the room respond.
